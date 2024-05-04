@@ -1,0 +1,31 @@
+
+basic_dir_path = '/unitree/robot/basic'  # Absolute path might be needed depending on the system setup
+tmp_dir_path = '/unitree/tmp'
+
+
+go2_models = {
+    1: "AIR",
+    2: "PRO",
+    4: "EDU"
+}
+
+services_path = {
+    "basic_service_check": "/unitree/robot/tool/basic_service_check",
+    "master_service": "/unitree/module/master_service/master_service",
+    "vui_service": "/unitree/module/vui_service/vui_service"
+}
+
+services_sha = {
+    "1.0.23": {
+        "factory": {
+            "basic_service_check": "2a2d6897d239baa4f5fb5b7b87dc1fd35bd83bb802c52ee6e57f1bbb54693d1c",
+            "master_service": "1bc07a31eb0ec27100fa7c51cc6f699d52b224e45b37bfba02d6d92645342958",
+            "vui_service": "7469ec3d70c350f699225d3e7b75294e08b8c2ce9d3e9e758bc08f16ca82949b"
+        },
+        "patched": {
+            "basic_service_check": "b9c4caf3f15948773009aa3891b97c8489b21df88458cdc846d6f37f1fa4fd9c",
+            "master_service": "06f79ddf80b5fcaaa1e0d571cc9e1fcadc735f22569fda9e25075648e393b7ec",
+            "vui_service": "035538130eb77ea22b0939b441abff4f4b1038d2861a6163ea5cb25d4a0043d4"
+        }
+    }
+}
