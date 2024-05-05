@@ -4,7 +4,7 @@ import hashlib
 import json
 import logging
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('go2_firmware_tools')
 
 def file_exists(file_path):
     return os.path.exists(file_path)
@@ -20,15 +20,7 @@ def copy_file(source_path, destination_path):
         shutil.copy(source_path, destination_path)
         logger.info(f"File copied from {source_path} to {destination_path}")
     except IOError as e:
-        logger.error(f"Unable to copy file: {e}")
-
-def replace_file(src, dst):
-    """Replace one file with another."""
-    try:
-        shutil.move(src, dst)
-        logger.info(f"Replaced {src} with {dst}")
-    except Exception as e:
-        logger.error(f"Error replacing file: {e}")
+        raise SystemError(f"Unable to copy file: {e}")
 
 def read_str_from_file(file_path):
     """Read and return content of a file, stripping whitespace."""
@@ -37,10 +29,10 @@ def read_str_from_file(file_path):
             content = file.read().strip()
         return content
     except FileNotFoundError:
-        logger.info(f"File not found: {file_path}")
+        raise SystemError(f"File not found: {file_path}")
         return None
     except Exception as e:
-        logger.error(f"An error occurred reading {file_path}: {e}")
+        raise SystemError(f"An error occurred reading {file_path}: {e}")
         return None
 
 def get_file_sha256(file_path):
@@ -52,10 +44,10 @@ def get_file_sha256(file_path):
                 sha256_hash.update(chunk)
         return sha256_hash.hexdigest()
     except FileNotFoundError:
-        logger.info(f"File not found: {file_path}")
+        raise SystemError(f"File not found: {file_path}")
         return None
     except Exception as e:
-        logger.error(f"Error computing SHA-256 for file {file_path}: {e}")
+        raise SystemError(f"Error computing SHA-256 for file {file_path}: {e}")
         return None
 
 def read_json_file(file_path):
@@ -64,11 +56,11 @@ def read_json_file(file_path):
         with open(file_path, 'r') as file:
             return json.load(file)
     except FileNotFoundError:
-        logger.error(f"File not found: {file_path}")
+        raise SystemError(f"File not found: {file_path}")
     except json.JSONDecodeError:
-        logger.error(f"Invalid JSON content in {file_path}.")
+        raise SystemError(f"Invalid JSON content in {file_path}.")
     except Exception as e:
-        logger.error(f"An error occurred reading JSON from {file_path}: {e}")
+        raise SystemError(f"An error occurred reading JSON from {file_path}: {e}")
     return None
 
 def change_file_permissions(file_path, mode):
@@ -80,10 +72,11 @@ def change_file_permissions(file_path, mode):
     """
     try:
         os.chmod(file_path, mode)
-        logging.info(f"Permissions changed for {file_path} to {oct(mode)}")
+        logger.info(f"Permissions changed for {file_path} to {oct(mode)}")
     except FileNotFoundError:
-        logging.error(f"The file {file_path} does not exist.")
+        raise SystemError(f"The file {file_path} does not exist.")
     except PermissionError:
-        logging.error(f"Permission denied when trying to change the permissions of {file_path}.")
+        raise SystemError(f"Permission denied when trying to change the permissions of {file_path}.")
     except Exception as e:
-        logging.error(f"An error occurred: {e}")
+        logger.error(f"An unexpected error occurred: {e}")
+        raise SystemError(f"An unexpected error occurred: {e}")

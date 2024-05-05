@@ -3,17 +3,71 @@ basic_dir_path = '/unitree/robot/basic'  # Absolute path might be needed dependi
 tmp_dir_path = '/unitree/tmp'
 
 
-go2_models = {
+model_id_to_name = {
     1: "AIR",
     2: "PRO",
     4: "EDU"
 }
+
+common_regions = [
+    "US",  # United States
+    "CN",  # China
+    "JP",  # Japan
+    "DE",  # Germany
+    "IN",  # India
+    "FR",  # France
+    "UK",  # United Kingdom
+    "BR",  # Brazil
+    "RU",  # Russia
+    "CA",  # Canada
+    "IT",  # Italy
+    "ES",  # Spain
+    "AU",  # Australia
+    "MX",  # Mexico
+    "KR",  # South Korea
+    "ID",  # Indonesia
+    "TR",  # Turkey
+    "SA",  # Saudi Arabia
+    "NL",  # Netherlands
+    "CH"   # Switzerland
+]
+
+interface_list = [
+    'eth0',
+    'wlan1'
+]
+
+# Reverse the dictionary to map from names to IDs
+model_name_to_id = {name: id for id, name in model_id_to_name.items()}
 
 services_path = {
     "basic_service_check": "/unitree/robot/tool/basic_service_check",
     "master_service": "/unitree/module/master_service/master_service",
     "vui_service": "/unitree/module/vui_service/vui_service"
 }
+
+service_list = [
+    "sport_mode",
+    "advanced_sport",
+    "motion_switcher",
+    "basic_service",
+    "audio_hub",
+    "bashrunner",
+    "chat_go",
+    "robot_state",
+    "obstacles_avoid",
+    "utrack",
+    "unitree_lidar",
+    "video_hub",
+    "voxel_height_mapping",
+    "vui_service",
+    "webrtc_bridge",
+    "webrtc_multicast_responder",
+    "webrtc_signal_server",
+    "net_switcher",
+    "master_service",
+]
+
 
 services_sha = {
     "1.0.23": {
