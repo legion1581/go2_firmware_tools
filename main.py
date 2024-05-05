@@ -184,10 +184,15 @@ def main():
         7: revert_services_to_factory,
         8: reboot_device
     }
+
+    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
+    print('|   GO2 Firmware TOOLS by legion1581    |')
+    print('|      https://theroboverse.com         |')
+    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
    
     print(""" 
     1: Spoof Model (AIR/PRO/EDU)
-    2: Spoof Region (RU/US/CN/FR/DE/UK/JP/KR/BR/IN/AU)
+    2: Spoof Region (US/CN/JP/DE/IN/FR/UK/BR/RU/CA/IT/ES/AU/MX/KR/ID/TR/SA/NL/CH)
     3: Spoof SN
     4: Change DDS Domain ID
     5: Change DDS Interface (eth0/wlan1)
