@@ -55,6 +55,15 @@ cd go2_firmware_tools
 python3 main.py
 ```
 
+## Update
+
+Should be in STA mode in order to have internet connection!
+
+```bash
+cd /unitree/dev/go2_firmware_tools
+git fetch --all && git reset --hard origin/master
+```
+
 ### Thanks
 
 To TheRoboVerse community! Visit us at [TheRoboVerse](https://theroboverse.com) for more information and support.

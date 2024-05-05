@@ -185,10 +185,10 @@ def main():
         8: reboot_device
     }
 
-    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
-    print('|   GO2 Firmware TOOLS by legion1581    |')
-    print('|      https://theroboverse.com         |')
-    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
+    print(          '+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
+    print(          '|   GO2 Firmware TOOLS by legion1581    |')
+    print(          '|      https://theroboverse.com         |')
+    print(          '+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
    
     print(""" 
     1: Spoof Model (AIR/PRO/EDU)
