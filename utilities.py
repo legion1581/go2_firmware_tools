@@ -30,10 +30,23 @@ def read_str_from_file(file_path):
         return content
     except FileNotFoundError:
         raise SystemError(f"File not found: {file_path}")
-        return None
     except Exception as e:
         raise SystemError(f"An error occurred reading {file_path}: {e}")
-        return None
+    
+def create_file_with_content(file_path, content):
+    """
+    Create a file with specified content.
+
+    Args:
+    file_path (str): The path where the file will be created.
+    content (bytes): The content to write to the file.
+    """
+    try:
+        with open(file_path, 'wb') as file:
+            file.write(content)
+        logger.info(f"File created at {file_path} with specified content.")
+    except Exception as e:
+        raise SystemError(f"Failed to create file: {e}")
 
 def get_file_sha256(file_path):
     """Calculate the SHA-256 hash of a file."""
@@ -80,3 +93,13 @@ def change_file_permissions(file_path, mode):
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
         raise SystemError(f"An unexpected error occurred: {e}")
+
+def load_config(file_path):
+    with open(file_path, 'r') as file:
+        return json.load(file)
+
+def update_config(file_path, updates):
+    config = load_config(file_path)
+    config.update(updates)
+    with open(file_path, 'w') as file:
+        json.dump(config, file, indent=4)

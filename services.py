@@ -31,7 +31,7 @@ def stop_all_services():
         stop_service(service)
 
 
-def install_service_patch(service_name):
+def install_service_patch(service_name, stop_service=False):
     """Install a service patch if the current firmware version is supported and the patch is not installed."""
     logger.info(f"Installing patch for {service_name}")
     if is_firmware_version_supported():
@@ -40,6 +40,8 @@ def install_service_patch(service_name):
             package_version = fetch_package_version()
             source_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"services/{package_version}/patched/{service_name}")
             dest_path = services_path[service_name]
+            if stop_service:
+                stop_service(service_name)
             copy_file(source_path, dest_path)
             change_file_permissions(source_path, 0o775)
             logger.info(f"Patch installed for {service_name}")

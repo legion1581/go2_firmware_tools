@@ -68,7 +68,9 @@ def change_model():
     if real_model == "AIR":
         choice = input("AIR vui_service patch required. Install it now? (yes/no): ")
         if choice.lower() == 'yes':
-            install_service_patch("vui_service")
+            create_file_with_content('/unitree/robot/basic/vuipower', b'\x00\x00')
+            create_file_with_content('/unitree/robot/basic/vuivolume', b'\x00\x00')
+            install_service_patch("vui_service", stop_service=True)
     
     choice = input("Reboot required, reboot now? (yes/no): ")
     if choice.lower() == 'yes':
@@ -125,9 +127,60 @@ def change_serial_number():
     serial_number = input("Enter new serial number: ")
     raise NotImplementedError
 
+def change_system_sounds():
+    source_path_base = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"media/audio")
+    dest_path = '/unitree/module/audio_hub/audio_player/internal_corpus/Non_CN'
+    copy_file(f"{source_path_base}/exit_companion_mode.mp3", f"{dest_path}/exit_companion_mode.mp3")
+    copy_file(f"{source_path_base}/start_companion_mode.mp3", f"{dest_path}/start_companion_mode.mp3")
+    copy_file(f"{source_path_base}/exit_obstacle_avoidance.mp3", f"{dest_path}/exit_obstacle_avoidance.mp3")
+    copy_file(f"{source_path_base}/start_obstacle_avoidance.mp3", f"{dest_path}/start_obstacle_avoidance.mp3")
+    dest_path = '/unitree/ota/engine/resource/prompt_tone/update/default'
+    copy_file(f"{source_path_base}/begin.mp3", f"{dest_path}/begin.mp3")
+    copy_file(f"{source_path_base}/end.mp3", f"{dest_path}/end.mp3")
+    copy_file(f"{source_path_base}/failed.mp3", f"{dest_path}/failed.mp3")
+    logger.info("Changing sounds complete")
+
 def change_dds_domain_id():
-    domain_id = input("Enter new DDS Domain ID: ")
-    raise NotImplementedError
+    current_domain_id = load_config("config.json").get('domain_id', 'Not set')  # Fetch current domain ID
+    print(f"Current DDS Domain: {current_domain_id}")
+    new_domain_id = input("Enter new DDS Domain ID: ")
+    try:
+        new_domain_id = int(new_domain_id)  # Ensure that the input is converted to an integer
+    except ValueError:
+        logger.error("Invalid input: Domain ID must be an integer.")
+        return
+
+    current_fw_ver = fetch_package_version()
+    if not is_firmware_version_supported():  # Ensure that current firmware version is checked
+        logger.error(f"Firmware {current_fw_ver} is not supported")
+        return
+
+    if current_domain_id == new_domain_id:
+        logger.info(f"Domain ID already set to: {new_domain_id}")
+        return
+
+    # Process each file that needs patching according to the current firmware version
+    for path, patch_type in dds_domain_patch_list[current_fw_ver].items():
+        if patch_type == 'json_patch':
+            dds_updade_domainid_json_file(path, new_domain_id)
+        elif patch_type == 'yaml_patch':
+            dds_update_domainid_yaml_file(path, new_domain_id)
+        elif patch_type == 'python_patch':
+            dds_update_domainid_python_file(path, new_domain_id)
+        elif patch_type == 'service_hot_patch':
+            offset = dds_domain_service_patch_offset[current_fw_ver].get(os.path.basename(path))
+            if offset is not None:
+                dds_update_domainid_hot_patch_file(path, offset, new_domain_id)
+            else:
+                logger.error(f"No offset found for hot patching the file: {path}")
+    
+    update_config("config.json", {'domain_id': new_domain_id})
+    logger.info("DDS Domain ID updated successfully.")
+
+    choice = input("Reboot required, reboot now? (yes/no): ")
+    if choice.lower() == 'yes':
+        reboot_device()
+
 
 def change_dds_interface():
     interface = input("Enter new interface (eth0/wlan1): ")
@@ -164,6 +217,9 @@ def revert_service_to_factory():
 def revert_services_to_factory():
     install_factory_services()
 
+def configure_interface_forwarding():
+    raise NotImplementedError
+
 def reboot_device():
     """Reboots the device by calling the operating system's reboot command."""
     try:
@@ -173,46 +229,75 @@ def reboot_device():
     except Exception as e:
         logger.error(f"An error occurred while trying to reboot the device: {e}")
 
+def exit_program():
+    print("Exiting...")
+    exit()
+
 def main():
     actions = {
-        1: change_model,
-        2: change_region,
-        3: change_serial_number,
-        4: change_dds_domain_id,
-        5: change_dds_interface,
-        6: revert_service_to_factory,
-        7: revert_services_to_factory,
-        8: reboot_device
+        'Firmware Settings': {
+            1: change_model,
+            2: change_region,
+            3: change_serial_number,
+            4: change_system_sounds,
+        },
+        'DDS Settings': {
+            5: change_dds_domain_id,
+            6: change_dds_interface,
+        },
+        'Factory Settings': {
+            7: revert_service_to_factory,
+            8: revert_services_to_factory,
+        },
+        'Network Settings': {
+            9: configure_interface_forwarding,
+        },
+        'System': {
+            10: reboot_device,
+            11: exit_program
+        }
     }
 
-    print(          '+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
-    print(          '|   GO2 Firmware TOOLS by legion1581    |')
-    print(          '|      https://theroboverse.com         |')
-    print(          '+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+')
-   
-    print(""" 
-    1: Spoof Model (AIR/PRO/EDU)
-    2: Spoof Region (US/CN/JP/DE/IN/FR/UK/BR/RU/CA/IT/ES/AU/MX/KR/ID/TR/SA/NL/CH)
-    3: Spoof SN
-    4: Change DDS Domain ID
-    5: Change DDS Interface (eth0/wlan1)
-    6: Revert Single Service to Factory    
-    7: Revert All Services to Factory
-    8: Reboot device
-    9: Exit
+    width = 80
+    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'.center(width))
+    print('|   GO2 Firmware TOOLS by legion1581            |'.center(width))
+    print('|      https://theroboverse.com                 |'.center(width))
+    print('+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+'.center(width))
+
+    
+    print("""
+    Firmware Settings:
+        1: Spoof Model (AIR/PRO/EDU)
+        2: Spoof Region (US/CN/JP/DE/IN/FR/UK/BR/RU/CA/IT/ES/AU/MX/KR/ID/TR/SA/NL/CH)
+        3: Spoof SN
+        4: Change System Sounds
+    DDS Settings:
+        5: Change DDS Domain ID
+        6: Change DDS Interface (eth0/wlan1)
+    Factory Settings:
+        7: Revert Single Service to Factory
+        8: Revert All Services to Factory
+    Network Settings:
+        9: Configure interface forwarding eth0 <--> wlan1
+    System:
+        10: Reboot device
+        11: Exit
     """)
+
     try:
         choice = int(input("Select an option: "))
-        if choice == 9:
-            print("Exiting...")
-            exit
-        action = actions.get(choice)
-        if action:
-            action()
+        for category, subactions in actions.items():
+            if choice in subactions:
+                subactions[choice]()
+                break
         else:
+            if choice == 11:
+                print("Exiting...")
+                return
             print("Invalid option, please try again.")
     except ValueError:
         print("Please enter a valid number.")
+
 
 if __name__ == "__main__":
     main()
