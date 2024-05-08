@@ -158,6 +158,8 @@ def change_dds_domain_id():
     if current_domain_id == new_domain_id:
         logger.info(f"Domain ID already set to: {new_domain_id}")
         return
+    
+    stop_all_services()
 
     # Process each file that needs patching according to the current firmware version
     for path, patch_type in dds_domain_patch_list[current_fw_ver].items():
