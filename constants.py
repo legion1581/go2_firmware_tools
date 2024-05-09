@@ -103,6 +103,8 @@ dds_domain_patch_list = {
         "/unitree/module/sbus_handle/dds_parameter.json": "json_patch",
         "/unitree/module/sport_mode/dds_parameter.json": "json_patch",
         "/unitree/module/unitree_lidar/config/config.yaml": "yaml_patch",
+        "/unitree/module/unitree_lidar/bin/unitree_lidar_dds_node": "service_hot_patch",
+        "/unitree/module/unitree_lidar/bin/lidar_switch": "service_hot_patch",
         "/unitree/module/utrack/dds_parameter.json": "json_patch",
         "/unitree/module/video_hub/videohub": "service_hot_patch",
         "/unitree/module/voxel_height_mapping/config/config.yaml": "yaml_patch",
@@ -116,6 +118,8 @@ dds_domain_service_patch_offset = {
     "1.0.23": {
         "audiohub": 0x69ec,
         "videohub": 0x1fa4,
-        "unitreeWebRTCClientMaster": 0x20694
+        "unitreeWebRTCClientMaster": 0x20694,
+        "unitree_lidar_dds_node": 0x122868,
+        "lidar_switch": 0x183DC
     }
 }

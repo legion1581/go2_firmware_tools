@@ -25,6 +25,14 @@ This repository contains tools designed to configure and manipulate settings on 
 10. **Reboot Device** - Perform a safe shutdown and reboot of the robot, ensuring no operational disruptions.
 11. **Exit** - Exit the tool.
 
+## Dependences
+
+Install the folowing packages
+```bash
+sudo apt-get update
+sudo apt-get install cmake build-essential
+```
+
 ## Installation
 
 ### Option 1: Pre-installed Package
@@ -36,8 +44,6 @@ A custom firmware upgrade is required. For detailed instructions, visit [therobo
 
 ```bash
 ssh root@[ip_address_of_the_robot]
-sudo apt-get update
-sudo apt-get install cmake build-essential
 mkdir -p /unitree/dev
 cd /unitree/dev
 git clone https://github.com/legion1581/go2_firmware_tools.git
@@ -51,8 +57,7 @@ python3 main.py
 Should be in STA mode in order to have internet connection!
 
 ```bash
-sudo apt-get update
-sudo apt-get install cmake build-essential
+ssh root@[ip_address_of_the_robot]
 cd /unitree/dev/go2_firmware_tools
 git fetch --all && git reset --hard origin/master
 pip install -r requirements.txt

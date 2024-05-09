@@ -127,8 +127,13 @@ def dds_update_domainid_hot_patch_file(file_path, offset, new_domain_id):
         logger.error("Invalid domain ID provided. It must be between 0 and 65535")
         return
 
-    # Assemble the instruction to move the new domain ID into the 32-bit register w0
-    instruction = f"mov w0, #{new_domain_id}"
+    # Assemble the instruction to move the new domain ID into the 32-bit register w0 or w1
+    file_name = os.path.basename(file_path)
+    if file_name == 'unitree_lidar_dds_node' or file_name == 'lidar_switch':
+        instruction = f"mov w1, #{new_domain_id}"
+    else:
+        instruction = f"mov w0, #{new_domain_id}"
+
     ks = Ks(KS_ARCH_ARM64, KS_MODE_LITTLE_ENDIAN)
     
     try:
