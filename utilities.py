@@ -29,7 +29,7 @@ def read_str_from_file(file_path):
             content = file.read().strip()
         return content
     except FileNotFoundError:
-        raise SystemError(f"File not found: {file_path}")
+        logger.info(f"File not found: {file_path}")
     except Exception as e:
         raise SystemError(f"An error occurred reading {file_path}: {e}")
     

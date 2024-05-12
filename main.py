@@ -8,7 +8,7 @@ import logging
 logger = logging.getLogger('go2_firmware_tools')
 
 # Set the logging level
-logger.setLevel(logging.DEBUG)  # This will capture all levels from DEBUG and above
+logger.setLevel(logging.INFO)  # This will capture all levels from DEBUG and above
 
 # Create handlers that will handle the log messages
 stream_handler = logging.StreamHandler()  # To output log messages to the console
@@ -24,24 +24,34 @@ stream_handler.setLevel(logging.DEBUG)  # This will capture all levels from DEBU
 logger.addHandler(stream_handler)
 
 def change_model():
+    
     model = input("Enter model (AIR/PRO/EDU): ")
     desired_model = model.upper()
-    if desired_model not in model_name_to_id:
-        raise ValueError(f"Invalid model specified: {desired_model}")
 
     current_model = fetch_spoofed_model()
 
+    if desired_model not in model_name_to_id:
+        raise ValueError(f"Invalid model specified: {desired_model}")
+
     if desired_model == current_model:
-        logger.info(f"Already set to {desired_model}")
-        return True
+        prompt = f"Already set to {desired_model}. Continue anyway (yes/[no])?"
+        while True:
+            user_input = input(prompt).strip().lower()
+            # Check if the input is either "yes", empty (Enter pressed), or absent
+            if user_input == "yes":
+                logger.info("Continuing with model change...")
+                break
+            elif user_input in ["no", ""]:
+                logger.info("Operation canceled by user.")
+                return False
+            else:
+                logger.info("Invalid input. Please answer 'yes' or press Enter to continue, 'no' to cancel.")
 
     stop_all_services()
     install_service_patch("basic_service_check")
     os.system(f"{services_path['basic_service_check']}")
-    
+
     real_model = fetch_real_model()
-    
-    logger.info(f"Current spoofed model: {current_model}")
     logger.info(f"Real model: {real_model}")
 
     version_file_path = f"{basic_dir_path}/ver"
@@ -66,15 +76,27 @@ def change_model():
         return False
 
     if real_model == "AIR":
-        choice = input("AIR vui_service patch required. Install it now? (yes/no): ")
-        if choice.lower() == 'yes':
-            create_file_with_content('/unitree/robot/basic/vuipower', b'\x00\x00')
-            create_file_with_content('/unitree/robot/basic/vuivolume', b'\x00\x00')
-            install_service_patch("vui_service", stop_service=True)
+        prompt = "AIR vui_service patch required. Install it now? ([yes]/no): "
+        while True:
+            user_input = input(prompt).strip().lower()
+            if user_input in ["yes", ""]:
+                create_file_with_content('/unitree/robot/basic/vuipower', b'\x00\x00')
+                create_file_with_content('/unitree/robot/basic/vuivolume', b'\x00\x00')
+                install_service_patch("vui_service", stop_service_flag=True)
+                break
+            elif user_input == "no":
+                logger.info("Operation canceled by user.")
+                return False
+            else:
+                logger.info("Invalid input. Please answer 'yes' or press Enter to continue, 'no' to cancel.")
     
-    choice = input("Reboot required, reboot now? (yes/no): ")
-    if choice.lower() == 'yes':
-        reboot_device()
+    prompt = "Reboot required, reboot now? ([yes]/no): "
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in ["yes", ""]:
+            reboot_device()
+        else:
+            break
 
     return True
 
@@ -97,7 +119,6 @@ def change_region():
     
     real_region = fetch_real_country()
     
-    logger.info(f"Current spoofed region: {current_region}")
     logger.info(f"Real model: {real_region}")
 
     country_file_path = f"{basic_dir_path}/country"
@@ -117,9 +138,13 @@ def change_region():
         raise ValueError(f"An error occurred while changing the device region: {str(e)}")
         return False
     
-    choice = input("Reboot required, reboot now? (yes/no): ")
-    if choice.lower() == 'yes':
-        reboot_device()
+    prompt = "Reboot required, reboot now? ([yes]/no): "
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in ["yes", ""]:
+            reboot_device()
+        else:
+            break
 
     return True
 
@@ -179,9 +204,13 @@ def change_dds_domain_id():
     update_config("config.json", {'domain_id': new_domain_id})
     logger.info("DDS Domain ID updated successfully.")
 
-    choice = input("Reboot required, reboot now? (yes/no): ")
-    if choice.lower() == 'yes':
-        reboot_device()
+    prompt = "Reboot required, reboot now? ([yes]/no): "
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in ["yes", ""]:
+            reboot_device()
+        else:
+            break
 
 
 def change_dds_interface():
@@ -202,9 +231,13 @@ def change_dds_interface():
     cyclondds_xml_set(interface, 'cyclonedds_noshm.xml')
     logger.info(f"DDS Interface changed to {interface}")
   
-    choice = input("Reboot required, reboot now? (yes/no): ")
-    if choice.lower() == 'yes':
-        reboot_device()
+    prompt = "Reboot required, reboot now? ([yes]/no): "
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in ["yes", ""]:
+            reboot_device()
+        else:
+            break
     
     return True
 
@@ -212,12 +245,21 @@ def revert_service_to_factory():
     service_name = input("Enter service name: ")
     logger.info(f"Reverting to factory service: {service_name}")
     if service_name in service_list:
-        install_factory_service(service_name)
+        install_factory_service(service_name, True)
     else:
         logger.error(f"Incorrect service name: {service_name}")
 
 def revert_services_to_factory():
     install_factory_services()
+    prompt = input("Reboot required, reboot now? ([yes]/no): ")
+    user_input = input(prompt).strip().lower()
+    prompt = "Reboot required, reboot now? ([yes]/no): "
+    while True:
+        user_input = input(prompt).strip().lower()
+        if user_input in ["yes", ""]:
+            reboot_device()
+        else:
+            break
 
 def configure_interface_forwarding():
     raise NotImplementedError

@@ -43,10 +43,7 @@ model_name_to_id = {name: id for id, name in model_id_to_name.items()}
 services_path = {
     "basic_service_check": "/unitree/robot/tool/basic_service_check",
     "master_service": "/unitree/module/master_service/master_service",
-    "vui_service": "/unitree/module/vui_service/vui_service",
-    "audiohub": "/unitree/module/audio_hub/audiohub",
-    "videohub": "/unitree/module/video_hub/videohub",
-    "unitreeWebRTCClientMaster": "/unitree/module/webrtc_bridge/bin/unitreeWebRTCClientMaster"
+    "vui_service": "/unitree/module/vui_service/vui_service"
 }
 
 service_list = [

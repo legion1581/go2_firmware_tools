@@ -1,12 +1,14 @@
 import os
 import logging
+import time
 from utilities import *
 from constants import *
 
 logger = logging.getLogger('go2_firmware_tools')
 
 def lay_down():
-    os.system('/unitree/sbin/tscli release 0')
+    # os.system('/unitree/sbin/tscli release 0')
+    os.system('/unitree/robot/tool/basic_demarcate Start_Move_zero_position')
 
 def fetch_real_serial_number():
     """Read the real serial number from its expected directory."""
@@ -21,7 +23,7 @@ def fetch_real_model():
     version = read_str_from_file(f"{tmp_dir_path}/ver")
     if version:
         model_number = int(version[-1])
-        return model_id_to_name.get(model_number, None)
+        return model_id_to_name.get(model_number, None) 
     return None
 
 def fetch_spoofed_model():

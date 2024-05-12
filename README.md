@@ -19,7 +19,7 @@ This repository contains tools designed to configure and manipulate settings on 
 8. **Revert All Services to Factory** - Reset all services to their factory default settings for a comprehensive system restore.
 
 ### Network Settings
-9. **Configure Interface Forwarding (eth0 <--> wlan1)** - Set up forwarding between ethernet and wireless interfaces to support reaching devices connected to eth0 through wlan1 (AP).
+9. **Configure Interface Forwarding (eth0 <--> wlan1)** - Set up forwarding between ethernet and wireless interfaces to support reaching devices connected to eth0 through wlan1 (AP) (Under Development).
 
 ### System
 10. **Reboot Device** - Perform a safe shutdown and reboot of the robot, ensuring no operational disruptions.
@@ -42,25 +42,31 @@ For more details, please visit [theroboverse.com](https://theroboverse.com) and 
 ### Option 2: Manual Installation
 A custom firmware upgrade is required. For detailed instructions, visit [theroboverse.com](https://theroboverse.com). Follow these steps to install manually:
 
+
+Connect via SSH to the dog and execute:
 ```bash
-ssh root@[ip_address_of_the_robot]
 mkdir -p /unitree/dev
 cd /unitree/dev
 git clone https://github.com/legion1581/go2_firmware_tools.git
 cd go2_firmware_tools
 pip install -r requirements.txt
-python3 main.py
 ```
 
 ## Update
 
 Should be in STA mode in order to have internet connection!
-
+Connect via SSH to the dog and execute:
 ```bash
-ssh root@[ip_address_of_the_robot]
 cd /unitree/dev/go2_firmware_tools
 git fetch --all && git reset --hard origin/master
 pip install -r requirements.txt
+```
+
+## Usage 
+Launch the scipt and choose the required option:
+```bash
+cd /unitree/dev/go2_firmware_tools
+python3 main.py
 ```
 
 ### Thanks

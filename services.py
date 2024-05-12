@@ -20,18 +20,19 @@ def stop_service(service_name):
         os.system(f"service {service_name} stop")
     else:
         os.system(f"/unitree/sbin/mscli stopservice {service_name}")
-    
     logger.info(f"{service_name} stopped")
 
 
 def stop_all_services():
     logger.info(f"Stopping all services...")
+    stop_service("sport_mode")
+    stop_service("advanced_sport")
     lay_down()
     for service in service_list:
         stop_service(service)
 
 
-def install_service_patch(service_name, stop_service=False):
+def install_service_patch(service_name, stop_service_flag=False):
     """Install a service patch if the current firmware version is supported and the patch is not installed."""
     logger.info(f"Installing patch for {service_name}")
     if is_firmware_version_supported():
@@ -40,7 +41,7 @@ def install_service_patch(service_name, stop_service=False):
             package_version = fetch_package_version()
             source_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"services/{package_version}/patched/{service_name}")
             dest_path = services_path[service_name]
-            if stop_service:
+            if stop_service_flag:
                 stop_service(service_name)
             copy_file(source_path, dest_path)
             change_file_permissions(source_path, 0o775)
@@ -50,12 +51,14 @@ def install_service_patch(service_name, stop_service=False):
     else:
         raise ValueError("Firmware version is not supported")
 
-def install_factory_service(service_name):
+def install_factory_service(service_name, stop_service_flag=False):
     """Install a service patch if the current firmware version is supported and the patch is not installed."""
     if is_firmware_version_supported():
         package_version = fetch_package_version()
         source_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f"services/{package_version}/factory/{service_name}")
         dest_path = services_path[service_name]
+        if stop_service_flag:
+                stop_service(service_name)
         copy_file(source_path, dest_path)
         change_file_permissions(dest_path, 0o775)
         logger.info(f"Factory service installed for {service_name}")
@@ -67,7 +70,6 @@ def install_factory_services():
     stop_all_services()
     for service in services_path.keys():
             install_factory_service(service)
-    logger.info("Please reboot for changes to take effect.")
 
 if __name__ == "__main__":
     stop_all_services()
