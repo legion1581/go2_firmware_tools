@@ -103,3 +103,8 @@ def update_config(file_path, updates):
     config.update(updates)
     with open(file_path, 'w') as file:
         json.dump(config, file, indent=4)
+
+
+if __name__ == "__main__":
+    target_directory = '/home/legion/Documents/theroboverse/go2_firmware_tools/services/1.0.24/patched/vui_service'  # Change this to your target directory
+    print(get_file_sha256(target_directory))
