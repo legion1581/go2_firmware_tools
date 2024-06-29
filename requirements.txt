@@ -1,2 +1,4 @@
 keystone-engine
 PyYAML
+fdt
+InquirerPy

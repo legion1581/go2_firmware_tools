@@ -1,6 +1,7 @@
 import os
 import logging
-import time
+import subprocess
+from InquirerPy import inquirer
 from utilities import *
 from constants import *
 
@@ -10,37 +11,63 @@ def lay_down():
     # os.system('/unitree/sbin/tscli release 0')
     os.system('/unitree/robot/tool/basic_demarcate Start_Move_zero_position')
 
-def fetch_real_serial_number():
-    """Read the real serial number from its expected directory."""
-    return read_str_from_file(f"{tmp_dir_path}/code")
+deviceInfo = {
+    "sn": "",
+    "region":  "",
+    "hw": "",
+    "bluetooth" : ""
+}
 
-def fetch_spoofed_serial_number():
-    """Read a spoofed serial number from a temporary directory."""
-    return read_str_from_file(f"{basic_dir_path}/code")
+#  fetch real device info from uni.img
+def fetch_device_data():
+    # Define the dd command
+    dd_command = [
+        'dd', 'if=/dev/mmcblk0p3', f'of={tmp_dir_path}/deviceInfo.txt', 
+        'bs=1', 'skip=2304', 'count=25'
+    ]
+    
+    # Execute the dd command, redirecting stdout and stderr to /dev/null
+    with open('/dev/null', 'w') as devnull:
+        subprocess.run(dd_command, check=True, stdout=devnull, stderr=devnull)
+    
+    # Read the content of the output file
+    with open('/unitree/tmp/deviceInfo.txt', 'r') as file:
+        data = file.read().strip()
+    
+    # Parse the output data
+    deviceInfo["sn"] = data[:16]
+    deviceInfo["region"] = data[16:18]
+    deviceInfo["hw"] = f"{data[18]}.{data[19]}"
+    deviceInfo["bluetooth"] = data[20:]
 
-def fetch_real_model():
+    return deviceInfo
+
+def get_real_serial_number():
+    """Read the real serial number"""
+    return deviceInfo["sn"]
+
+def get_real_model():
     """Retrieve the model type from the version file in the basic directory."""
-    version = read_str_from_file(f"{tmp_dir_path}/ver")
-    if version:
-        model_number = int(version[-1])
-        return model_id_to_name.get(model_number, None) 
-    return None
+    model_number = int(deviceInfo["sn"][4]) # get the 5th number from the sn
+    return model_id_to_name.get(model_number, None) 
 
-def fetch_spoofed_model():
-    """Retrieve the model type from the version file in the tmp directory."""
-    version = read_str_from_file(f"{basic_dir_path}/ver")
-    if version:
-        model_number = int(version[-1])
-        return model_id_to_name.get(model_number, None)
-    return None
-
-def fetch_real_country():
+def get_real_country():
     """Get the country code from the version file in the basic directory."""
-    return read_str_from_file(f"{tmp_dir_path}/country")
+    return deviceInfo["region"]
 
-def fetch_spoofed_country():
-    """Get the country code from the version file in the tmp directory."""
-    return read_str_from_file(f"{basic_dir_path}/country")
+def get_real_hw_ver():
+    return deviceInfo["hw"]
+
+def get_real_bluetooth_code():
+    return deviceInfo["bluetooth"]
+
+def print_device_data():
+    print(f"Serial: {get_real_serial_number()}")
+    print(f"Model: Go2 {get_real_model()}")
+    print(f"Region: {get_real_country()}")
+    print(f"Package ver: {fetch_package_version()}")
+    print(f"Hardware ver: {get_real_hw_ver()}")
+    print(f"Bluetooth: {get_real_bluetooth_code()}")
 
 def fetch_package_version():
     """Read the package version from a JSON file."""
@@ -55,5 +82,42 @@ def is_firmware_version_supported():
     """Check if the current firmware version is supported for patching."""
     return fetch_package_version() in services_sha
 
+# 
+# CMD MENU
+#    
+
+def display_device_menu():
+    menu_items = [
+        'Show Device Info',
+        'Back to Main Menu',
+        'Quit'
+    ]
+     
+    choice = inquirer.select(
+        message="Select an option:",
+        choices=menu_items
+    ).execute()
+
+    return choice
+
+def handle_device_choice(choice):
+    if choice == 'Show Device Info':
+        print_device_data()
+
+    elif choice == 'Back to Main Menu':
+        return False
+    elif choice == 'Quit':
+        exit()
+    else:
+        print(f"Invalid choice, please try again. choice : {choice}")
+    return True
+
+def cli_handler():
+    while True:
+        choice = display_device_menu()
+        if not handle_device_choice(choice):
+            break
+
 if __name__ == "__main__":
+    fetch_device_data()
     pass

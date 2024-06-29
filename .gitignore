@@ -1,3 +1,5 @@
-ideas.txt
 __pycache__
 log/
+ideas.txt
+re.txt
+deploy.sh

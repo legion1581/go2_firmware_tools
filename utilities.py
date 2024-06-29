@@ -3,6 +3,7 @@ import shutil
 import hashlib
 import json
 import logging
+import sys
 
 logger = logging.getLogger('go2_firmware_tools')
 
@@ -18,6 +19,60 @@ def copy_file(source_path, destination_path):
     """Copy the contents of one file to another."""
     try:
         shutil.copy(source_path, destination_path)
+        logger.info(f"File copied from {source_path} to {destination_path}")
+    except IOError as e:
+        raise SystemError(f"Unable to copy file: {e}")
+
+def truncate_file(file_path, size):
+    try:
+        with open(file_path, 'r+b') as f:
+            f.truncate(size)
+        logger.info(f"File {file_path} truncated to {size} bytes.")
+        return True
+    except FileNotFoundError:
+        logger.error(f"File not found: {file_path}")
+        return False
+    except PermissionError:
+        logger.error(f"Permission denied: {file_path}")
+        return False
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        return False
+
+def rename_file(current_path, new_path):
+    try:
+        os.rename(current_path, new_path)
+        logger.info(f"File renamed from {current_path} to {new_path}")
+        return True
+    except FileNotFoundError:
+        logger.error(f"File not found: {current_path}")
+        return False
+    except PermissionError:
+        logger.error(f"Permission denied: {current_path}")
+        return False
+    except Exception as e:
+        logger.error(f"An error occurred: {e}")
+        return False
+
+def copy_file_with_progress(source_path, destination_path):
+    """Copy the contents of one file to another with progress display."""
+    try:
+        total_size = os.path.getsize(source_path)
+        copied_size = 0
+        buffer_size = 1024 * 1024  # 1MB
+
+        with open(source_path, 'rb') as src, open(destination_path, 'wb') as dst:
+            while True:
+                buffer = src.read(buffer_size)
+                if not buffer:
+                    break
+                dst.write(buffer)
+                copied_size += len(buffer)
+                progress = copied_size / total_size * 100
+                sys.stdout.write(f"\rCopy progress: {progress:.2f}%")
+                sys.stdout.flush()
+
+        sys.stdout.write("\n")  # Move to the next line after the progress is complete
         logger.info(f"File copied from {source_path} to {destination_path}")
     except IOError as e:
         raise SystemError(f"Unable to copy file: {e}")
@@ -61,6 +116,22 @@ def get_file_sha256(file_path):
         return None
     except Exception as e:
         raise SystemError(f"Error computing SHA-256 for file {file_path}: {e}")
+        return None
+
+
+def get_file_md5(file_path):
+    """Calculate the MD5 hash of a file."""
+    md5_hash = hashlib.md5()
+    try:
+        with open(file_path, 'rb') as file:
+            for chunk in iter(lambda: file.read(4096), b""):
+                md5_hash.update(chunk)
+        return md5_hash.hexdigest()
+    except FileNotFoundError:
+        raise SystemError(f"File not found: {file_path}")
+        return None
+    except Exception as e:
+        raise SystemError(f"Error computing MD5 for file {file_path}: {e}")
         return None
 
 def read_json_file(file_path):

@@ -3,6 +3,7 @@ basic_dir_path = '/unitree/robot/basic'  # Absolute path might be needed dependi
 tmp_dir_path = '/unitree/tmp'
 
 
+
 model_id_to_name = {
     1: "AIR",
     2: "PRO",
