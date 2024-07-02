@@ -1,7 +1,8 @@
 import logging
 from InquirerPy import inquirer
 from firmware import firmware
-import device_managment
+from network import network
+from device import device
 
 # Configure basic logging
 logging.basicConfig(level=logging.DEBUG, 
@@ -18,8 +19,7 @@ def main_menu():
     menu_items = [
         'Device',
         'Firmware',
-        'Networking',
-        'DDS',
+        'Network',
         'Quit'
     ]
     
@@ -31,13 +31,15 @@ def main_menu():
     return choice
 
 if __name__ == '__main__':
-    device_managment.fetch_device_data()
+    device.device_managment.fetch_device_data()
     while True:
         choice = main_menu()
         if choice == 'Firmware':
             firmware.cli_handler()
         elif choice == 'Device':
-            device_managment.cli_handler()
+            device.cli_handler()
+        elif choice == 'Network':
+            network.cli_handler()
         # elif choice == 'DDS':
         #     dds.cli_handler()
         elif choice == 'Quit':

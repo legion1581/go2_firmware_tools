@@ -1,8 +1,8 @@
 import time
-from device_managment import *
+from device.device_managment import *
 from services import *
 from constants import *
-from dds_managment import *
+from network.dds_managment import *
 import logging
 
 # Configure basic logging

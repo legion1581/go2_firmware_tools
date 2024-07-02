@@ -4,7 +4,7 @@ import time
 import logging
 from utilities import *
 from constants import *
-from device_managment import *
+from device.device_managment import *
 
 logger = logging.getLogger('go2_firmware_tools')
 
