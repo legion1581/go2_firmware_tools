@@ -1,3 +1,4 @@
+import os
 import logging
 from InquirerPy import inquirer
 from firmware import firmware
@@ -31,7 +32,9 @@ def main_menu():
     return choice
 
 if __name__ == '__main__':
-    device.device_managment.fetch_device_data()
+    main_py_dir = os.path.dirname(os.path.abspath(__file__))
+    device.device_management.device_init(main_py_dir)
+
     while True:
         choice = main_menu()
         if choice == 'Firmware':

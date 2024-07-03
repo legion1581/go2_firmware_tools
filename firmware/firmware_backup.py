@@ -7,12 +7,46 @@ import datetime
 import hashlib
 from InquirerPy import inquirer
 from fdt import parse_dtb
-from utilities import read_json_file, copy_file_with_progress, file_exists, rename_file, truncate_file, copy_file
+from util.utilities import read_json_file, copy_file_with_progress, file_exists, rename_file, truncate_file, is_mounted
+from device.device_management import get_real_model
 
 # Get the logger
 logger = logging.getLogger('go2_firmware_tools')
 
 backup_folder = '/unitree/tmp/backup'
+
+def _copy_file_to_userdata_partition(new_filename, new_filename_folder=""):
+    # duplicate the uni to userdata (recovery partition) to keep it more safe.
+
+    mount_point = '/mnt/mmcblk0p8'
+    os.makedirs(mount_point, exist_ok=True)
+
+    os.makedirs(f'{mount_point}/{new_filename_folder}', exist_ok=True)
+    
+    if not is_mounted(mount_point):
+        # Mount the userdata partition if it's not already mounted
+        subprocess.run(['sudo', 'mount', '/dev/mmcblk0p8', mount_point], check=True)
+    
+    try:
+        copy_file_with_progress(f'{backup_folder}/{new_filename}', f'{mount_point}/{new_filename_folder}/{new_filename}')
+    finally:
+        # Unmount the userdata partition if it was mounted by this script
+        subprocess.run(['sudo', 'umount', mount_point], check=True)
+
+
+def backup_idb_loader_from_partition():
+    idb_path = f'{backup_folder}/pre-uboot.img'
+    # Define the dd command
+    dd_command = [
+        'sudo', 'dd', 'if=/dev/mmcblk0', f'of={idb_path}', 
+        'bs=512', 'count=16384'
+    ]
+    
+    # Execute the dd command, redirecting stdout and stderr to /dev/null
+    with open('/dev/null', 'w') as devnull:
+        subprocess.run(dd_command, check=True, stdout=devnull, stderr=devnull)
+    
+    _copy_file_to_userdata_partition("pre-uboot.img", "backup")
 
 # 
 # UBOOT BACKUP
@@ -57,7 +91,7 @@ def backup_uboot_from_partition():
     uboot_path = f'{backup_folder}/uboot.img'
     # Define the dd command
     dd_command = [
-        'dd', 'if=/dev/mmcblk0p1', f'of={uboot_path}', 
+        'sudo', 'dd', 'if=/dev/mmcblk0p1', f'of={uboot_path}', 
         'bs=512'
     ]
     
@@ -67,8 +101,11 @@ def backup_uboot_from_partition():
     
     timestamp, uboot_size, md5 = _get_uboot_info(f'{uboot_path}')
 
-    truncate_file(uboot_path, uboot_size)
-    rename_file(uboot_path, f'{backup_folder}/uboot_{timestamp}_{md5}.img')
+    # truncate_file(uboot_path, uboot_size)
+    new_file_name = f'uboot_{timestamp}_{md5}.img'
+    rename_file(uboot_path, f'{backup_folder}/{new_file_name}')
+
+    _copy_file_to_userdata_partition(f'{new_file_name}', "backup")
 
 # 
 # BOOT BACKUP
@@ -111,7 +148,7 @@ def backup_boot_from_partition():
     boot_path = f'{backup_folder}/boot.img'
     # Define the dd command
     dd_command = [
-        'dd', 'if=/dev/mmcblk0p4', f'of={boot_path}', 
+        'sudo', 'dd', 'if=/dev/mmcblk0p4', f'of={boot_path}', 
         'bs=512'
     ]
     
@@ -122,7 +159,10 @@ def backup_boot_from_partition():
     timestamp, boot_size, md5 = _get_boot_info(f'{boot_path}')
 
     truncate_file(boot_path, boot_size)
-    rename_file(boot_path, f'{backup_folder}/boot_{timestamp}_{md5}.img')
+    new_file_name = f'boot_{timestamp}_{md5}.img'
+    rename_file(boot_path, f'{backup_folder}/{new_file_name}')
+
+    _copy_file_to_userdata_partition(f'{new_file_name}', "backup")
     
 # 
 # USERDATA BACKUP
@@ -143,6 +183,7 @@ def backup_data_from_userdata():
         os.makedirs(mount_point_1, exist_ok=True)
         os.makedirs(mount_point_2, exist_ok=True)
         os.makedirs(backup_folder, exist_ok=True)
+        os.makedirs(f'{backup_folder}/userdata', exist_ok=True)
 
         # Mount the first partition
         subprocess.run(['sudo', 'mount', '/dev/mmcblk0p8', mount_point_1], check=True)
@@ -154,28 +195,29 @@ def backup_data_from_userdata():
             # Read the package version from the JSON file
             package_info = read_json_file(version_file)
             version = package_info.get('Package', 'Version not found') if package_info else 'Version not found'
+            model = get_real_model()
 
             # Unmount linux-rootfs.img
             subprocess.run(['sudo', 'umount', mount_point_2], check=True)
 
             # Copy the image file to the backup folder
-            copy_file_with_progress(rootfs_file, f"{backup_folder}/linux-rootfs-{version}.img")
+            copy_file_with_progress(rootfs_file, f"{backup_folder}/userdata/linux-rootfs-{model}-{version}.img")
 
         if file_exists(boot_file):
-            backup_boot_path = f'{backup_folder}/boot_from_userdata.img'
+            backup_boot_path = f'{backup_folder}/userdata/boot.img'
             copy_file_with_progress(boot_file, f'{backup_boot_path}')
 
             timestamp, boot_size, md5 = _get_boot_info(f'{backup_boot_path}')
             truncate_file(f'{backup_boot_path}', boot_size)
-            rename_file(backup_boot_path, f'{backup_folder}/boot_userdata_{timestamp}_{md5}.img')
+            rename_file(backup_boot_path, f'{backup_folder}/userdata/boot_{timestamp}_{md5}.img')
 
         if file_exists(uboot_file):
-            backup_uboot_path = f'{backup_folder}/uboot_from_userdata.img'
+            backup_uboot_path = f'{backup_folder}/userdata/uboot.img'
             copy_file_with_progress(uboot_file , f'{backup_uboot_path}')
 
             timestamp, uboot_size, md5 = _get_uboot_info(f'{backup_uboot_path}')
             truncate_file(f'{backup_uboot_path}', uboot_size)
-            rename_file(backup_uboot_path, f'{backup_folder}/uboot_userdata_{timestamp}_{md5}.img')
+            rename_file(backup_uboot_path, f'{backup_folder}/userdata/uboot_{timestamp}_{md5}.img')
 
 
         # Unmount the first partition
@@ -201,7 +243,7 @@ def backup_uni_from_partition():
     
     # Define the dd command
     dd_command = [
-        'dd', 'if=/dev/mmcblk0p3', f'of={uni_path}', 
+        'sudo', 'dd', 'if=/dev/mmcblk0p3', f'of={uni_path}', 
         'bs=512'
     ]
     
@@ -235,15 +277,7 @@ def backup_uni_from_partition():
     new_file_name = f'uni_{sn}_{region}_{hw}_{bluetooth}.img'
     rename_file(uni_path, f'{backup_folder}/{new_file_name}')
 
-    # duplicate the uni to userdata (recovery partition) to keep it more safe. 
-    mount_point = '/mnt/mmcblk0p8'
-    os.makedirs(mount_point, exist_ok=True)
-    # Mount the userdata partition
-    subprocess.run(['sudo', 'mount', '/dev/mmcblk0p8', mount_point], check=True)
-    copy_file_with_progress(f'{backup_folder}/{new_file_name}', f'{mount_point}/{new_file_name}')
-    # Unmount the userdata partition
-    subprocess.run(['sudo', 'umount', mount_point], check=True)
-
+    _copy_file_to_userdata_partition(f'{new_file_name}', "backup")
 
 
 # 
@@ -252,6 +286,7 @@ def backup_uni_from_partition():
 
 def display_firmware_menu():
     menu_items = [
+        'Backup idbloader',
         'Backup uboot',
         'Backup boot',
         'Backup uni',
@@ -269,7 +304,10 @@ def display_firmware_menu():
     return choice
 
 def handle_firmware_choice(choice):
-    if choice == 'Backup uboot':
+    if choice == 'Backup idbloader':
+        backup_idb_loader_from_partition()
+        print(f"Backup saved to {backup_folder}")
+    elif choice == 'Backup uboot':
         backup_uboot_from_partition()
         print(f"Backup saved to {backup_folder}")
     elif choice == 'Backup boot':
@@ -283,6 +321,7 @@ def handle_firmware_choice(choice):
         backup_data_from_userdata()
         print(f"Backup saved to {backup_folder}")
     elif choice == 'Backup ALL':
+        backup_idb_loader_from_partition()
         backup_uboot_from_partition()
         backup_boot_from_partition()
         backup_uni_from_partition()

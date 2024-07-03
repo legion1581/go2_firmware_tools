@@ -1,6 +1,6 @@
 from . import firmware_backup
 from InquirerPy import inquirer
-from device.device_managment import fetch_package_version
+from device.device_management import fetch_package_version
 
 # 
 # CMD MENU
