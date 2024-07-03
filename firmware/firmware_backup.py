@@ -208,7 +208,7 @@ def backup_data_from_userdata():
             copy_file_with_progress(boot_file, f'{backup_boot_path}')
 
             timestamp, boot_size, md5 = _get_boot_info(f'{backup_boot_path}')
-            # truncate_file(f'{backup_boot_path}', boot_size)
+            truncate_file(f'{backup_boot_path}', boot_size)
             rename_file(backup_boot_path, f'{backup_folder}/userdata/boot_{timestamp}_{md5}.img')
 
         if file_exists(uboot_file):
@@ -216,7 +216,7 @@ def backup_data_from_userdata():
             copy_file_with_progress(uboot_file , f'{backup_uboot_path}')
 
             timestamp, uboot_size, md5 = _get_uboot_info(f'{backup_uboot_path}')
-            truncate_file(f'{backup_uboot_path}', uboot_size)
+            # truncate_file(f'{backup_uboot_path}', uboot_size)
             rename_file(backup_uboot_path, f'{backup_folder}/userdata/uboot_{timestamp}_{md5}.img')
 
 
