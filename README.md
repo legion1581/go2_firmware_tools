@@ -22,8 +22,7 @@ Currently supported firmware package
 
  
 ## Dependences
-
-Install the folowing packages
+Connect via SSH to the dog and install the folowing packages
 ```bash
 sudo apt-get update
 sudo apt-get install cmake build-essential
