@@ -42,6 +42,16 @@ service_list = [
 
 
 services_sha = {
+    "1.0.24": {
+        "factory": {
+            "basic_service_check": "2a2d6897d239baa4f5fb5b7b87dc1fd35bd83bb802c52ee6e57f1bbb54693d1c",
+            "vui_service": "1dd64bce98015b33ad3d58487276f6c1f90900d7632bf8e9fe519ab555f5c45a"
+        },
+        "patched": {
+            "basic_service_check": "8698762221907f676ab1dbdc7232ea040155a4fb55a1412e50de15dbf4d0a88d",
+            "vui_service": "dad569d91c96b8cfa24ce147a4c2b8ec3577f38601623be5c13b5cdbaf6fac97"
+        }
+    },
     "1.0.25": {
         "factory": {
             "basic_service_check": "2a2d6897d239baa4f5fb5b7b87dc1fd35bd83bb802c52ee6e57f1bbb54693d1c",

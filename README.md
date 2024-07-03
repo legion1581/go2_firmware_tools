@@ -4,6 +4,7 @@ This repository contains tools designed to configure and manipulate settings on 
 
 ## Supported version
 Currently supported firmware package 
+- 1.0.24 
 - 1.0.25 
 
 ## Menu Overview
