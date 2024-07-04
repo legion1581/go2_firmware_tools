@@ -21,13 +21,13 @@ def _copy_file_to_userdata_partition(new_filename, new_filename_folder=""):
     mount_point = '/mnt/mmcblk0p8'
     os.makedirs(mount_point, exist_ok=True)
 
-    os.makedirs(f'{mount_point}/{new_filename_folder}', exist_ok=True)
     
     if not is_mounted(mount_point):
         # Mount the userdata partition if it's not already mounted
         subprocess.run(['mount', '/dev/mmcblk0p8', mount_point], check=True)
     
     try:
+        os.makedirs(f'{mount_point}/{new_filename_folder}', exist_ok=True)
         copy_file_with_progress(f'{backup_folder}/{new_filename}', f'{mount_point}/{new_filename_folder}/{new_filename}')
     finally:
         # Unmount the userdata partition if it was mounted by this script
