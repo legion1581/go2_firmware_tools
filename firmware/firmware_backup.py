@@ -36,6 +36,9 @@ def _copy_file_to_userdata_partition(new_filename, new_filename_folder=""):
 
 def backup_idb_loader_from_partition():
     idb_path = f'{backup_folder}/pre-uboot.img'
+
+    os.makedirs(backup_folder, exist_ok=True)
+
     # Define the dd command
     dd_command = [
         'dd', 'if=/dev/mmcblk0', f'of={idb_path}', 
@@ -89,6 +92,9 @@ def _get_uboot_info(path):
 
 def backup_uboot_from_partition():
     uboot_path = f'{backup_folder}/uboot.img'
+
+    os.makedirs(backup_folder, exist_ok=True)
+
     # Define the dd command
     dd_command = [
         'dd', 'if=/dev/mmcblk0p1', f'of={uboot_path}', 
@@ -146,6 +152,9 @@ def _get_boot_info(path):
 
 def backup_boot_from_partition():
     boot_path = f'{backup_folder}/boot.img'
+
+    os.makedirs(backup_folder, exist_ok=True)
+
     # Define the dd command
     dd_command = [
         'dd', 'if=/dev/mmcblk0p4', f'of={boot_path}', 
@@ -240,6 +249,8 @@ def backup_data_from_userdata():
 
 def backup_uni_from_partition():
     uni_path = f'{backup_folder}/uni.img'
+
+    os.makedirs(backup_folder, exist_ok=True)
     
     # Define the dd command
     dd_command = [
