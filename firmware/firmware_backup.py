@@ -25,20 +25,20 @@ def _copy_file_to_userdata_partition(new_filename, new_filename_folder=""):
     
     if not is_mounted(mount_point):
         # Mount the userdata partition if it's not already mounted
-        subprocess.run(['sudo', 'mount', '/dev/mmcblk0p8', mount_point], check=True)
+        subprocess.run(['mount', '/dev/mmcblk0p8', mount_point], check=True)
     
     try:
         copy_file_with_progress(f'{backup_folder}/{new_filename}', f'{mount_point}/{new_filename_folder}/{new_filename}')
     finally:
         # Unmount the userdata partition if it was mounted by this script
-        subprocess.run(['sudo', 'umount', mount_point], check=True)
+        subprocess.run(['umount', mount_point], check=True)
 
 
 def backup_idb_loader_from_partition():
     idb_path = f'{backup_folder}/pre-uboot.img'
     # Define the dd command
     dd_command = [
-        'sudo', 'dd', 'if=/dev/mmcblk0', f'of={idb_path}', 
+        'dd', 'if=/dev/mmcblk0', f'of={idb_path}', 
         'bs=512', 'count=16384'
     ]
     
@@ -91,7 +91,7 @@ def backup_uboot_from_partition():
     uboot_path = f'{backup_folder}/uboot.img'
     # Define the dd command
     dd_command = [
-        'sudo', 'dd', 'if=/dev/mmcblk0p1', f'of={uboot_path}', 
+        'dd', 'if=/dev/mmcblk0p1', f'of={uboot_path}', 
         'bs=512'
     ]
     
@@ -148,7 +148,7 @@ def backup_boot_from_partition():
     boot_path = f'{backup_folder}/boot.img'
     # Define the dd command
     dd_command = [
-        'sudo', 'dd', 'if=/dev/mmcblk0p4', f'of={boot_path}', 
+        'dd', 'if=/dev/mmcblk0p4', f'of={boot_path}', 
         'bs=512'
     ]
     
@@ -186,11 +186,11 @@ def backup_data_from_userdata():
         os.makedirs(f'{backup_folder}/userdata', exist_ok=True)
 
         # Mount the first partition
-        subprocess.run(['sudo', 'mount', '/dev/mmcblk0p8', mount_point_1], check=True)
+        subprocess.run(['mount', '/dev/mmcblk0p8', mount_point_1], check=True)
 
         if file_exists(rootfs_file):
             # Mount the image file
-            subprocess.run(['sudo', 'mount', rootfs_file, mount_point_2], check=True)
+            subprocess.run(['mount', rootfs_file, mount_point_2], check=True)
 
             # Read the package version from the JSON file
             package_info = read_json_file(version_file)
@@ -198,7 +198,7 @@ def backup_data_from_userdata():
             model = get_real_model()
 
             # Unmount linux-rootfs.img
-            subprocess.run(['sudo', 'umount', mount_point_2], check=True)
+            subprocess.run(['umount', mount_point_2], check=True)
 
             # Copy the image file to the backup folder
             copy_file_with_progress(rootfs_file, f"{backup_folder}/userdata/linux-rootfs-{model}-{version}.img")
@@ -221,7 +221,7 @@ def backup_data_from_userdata():
 
 
         # Unmount the first partition
-        subprocess.run(['sudo', 'umount', mount_point_1], check=True)
+        subprocess.run(['umount', mount_point_1], check=True)
 
 
     except subprocess.CalledProcessError as e:
@@ -243,7 +243,7 @@ def backup_uni_from_partition():
     
     # Define the dd command
     dd_command = [
-        'sudo', 'dd', 'if=/dev/mmcblk0p3', f'of={uni_path}', 
+        'dd', 'if=/dev/mmcblk0p3', f'of={uni_path}', 
         'bs=512'
     ]
     

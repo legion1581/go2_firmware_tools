@@ -24,12 +24,14 @@ def lay_down():
     os.system('/unitree/robot/tool/basic_demarcate Start_Move_zero_position')
 
 
-
 #  fetch real device info from uni.img
 def fetch_device_data():
+
+    os.makedirs(tmp_dir_path, exist_ok=True)
+
     # Define the dd command
     dd_command = [
-        'sudo', 'dd', 'if=/dev/mmcblk0p3', f'of={tmp_dir_path}/deviceInfo.txt', 
+        'dd', 'if=/dev/mmcblk0p3', f'of={tmp_dir_path}/deviceInfo.txt', 
         'bs=1', 'skip=2304', 'count=25'
     ]
     
