@@ -5,6 +5,7 @@ import json
 import logging
 import datetime
 import hashlib
+import pytz
 from InquirerPy import inquirer
 from fdt import parse_dtb
 from util.utilities import read_json_file, copy_file_with_progress, file_exists, rename_file, truncate_file, is_mounted
@@ -67,8 +68,10 @@ def _get_uboot_info(path):
     # Extract and convert the timestamp
     unix_timestamp = dt.get_property('timestamp')[0]
     if unix_timestamp is not None:
+        # Define the GMT timezone
+        gmt_timezone = pytz.timezone('Etc/GMT')
         # Convert the Unix timestamp to a datetime object
-        dt_object = datetime.datetime.fromtimestamp(unix_timestamp)
+        dt_object = datetime.datetime.fromtimestamp(unix_timestamp, tz=gmt_timezone)
 
         # Format the datetime object to DD_MM_YEAR_HOUR_MIN_SEC
         formatted_date = dt_object.strftime('%d_%m_%Y_%H_%M_%S')
@@ -127,8 +130,10 @@ def _get_boot_info(path):
     # Extract and convert the timestamp
     unix_timestamp = dt.get_property('timestamp')[0]
     if unix_timestamp is not None:
+        # Define the GMT timezone
+        gmt_timezone = pytz.timezone('Etc/GMT')
         # Convert the Unix timestamp to a datetime object
-        dt_object = datetime.datetime.fromtimestamp(unix_timestamp)
+        dt_object = datetime.datetime.fromtimestamp(unix_timestamp, tz=gmt_timezone)
 
         # Format the datetime object to DD_MM_YEAR_HOUR_MIN_SEC
         formatted_date = dt_object.strftime('%d_%m_%Y_%H_%M_%S')
