@@ -1,5 +1,4 @@
-keystone-engine
-PyYAML
 fdt
 InquirerPy
 pytz
+tqdm

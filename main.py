@@ -43,7 +43,5 @@ if __name__ == '__main__':
             device.cli_handler()
         elif choice == 'Network':
             network.cli_handler()
-        # elif choice == 'DDS':
-        #     dds.cli_handler()
         elif choice == 'Quit':
             break

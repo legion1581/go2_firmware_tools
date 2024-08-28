@@ -16,27 +16,17 @@ Currently supported firmware package
 ### Firmware
 5. **Backup partitions** - Backup pre-uboot, uboot, boot, and uni partitions to the /unitree/tmp/backup folder.
 6. **Flash partitions** - Flash partitions (not yet implemented).
+7. **Install OTA updates** - Download and install official OTA update for PRO/EDU model. Usefull for AIR users to install full firmware package
 ### Network
-7. **WiFi config** - Switch WiFi either to AP or STA mode.
-8. **DDS config** -DDS config (not yet implemented).
-
- 
-## Dependences
-Connect via SSH to the dog and install the folowing packages
-```bash
-sudo apt-get update
-sudo apt-get install cmake build-essential
-```
+8. **WiFi config** - Switch WiFi either to AP or STA mode.
+9. **WebRTC config** - WebRTC config.
+    - **Multi-session**: Enable or disable multi-session support within WebRTC. This allows the device to handle multiple concurrent WebRTC sessions, which is useful for managing multiple remote connections simultaneously
 
 ## Installation
 
-### Option 1: Pre-installed Package
-The tools may already be included in custom firmware versions:
-For more details, please visit [theroboverse.com](https://theroboverse.com) and join our Discord community.
+A custom firmware upgrade or jailbreak is required. For detailed instructions, visit [theroboverse.com](https://theroboverse.com). 
 
-### Option 2: Manual Installation
-A custom firmware upgrade is required. For detailed instructions, visit [theroboverse.com](https://theroboverse.com). Follow these steps to install manually:
-
+After gaining root, follow these steps to install manually:
 
 Connect via SSH to the dog and execute:
 ```bash

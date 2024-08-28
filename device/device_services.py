@@ -21,6 +21,11 @@ def stop_service(service_name):
         subprocess.run(f"/unitree/sbin/mscli stopservice {service_name}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     print(f"{service_name} stopped")
 
+def restart_service(service_name):
+    # Run the command and suppress stdout and stderr
+    subprocess.run(f"/unitree/sbin/mscli restartservice {service_name}", shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    print(f"{service_name} restarted")
+
 
 def stop_all_services():
     print(f"Stopping all services...")

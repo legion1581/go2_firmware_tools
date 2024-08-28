@@ -89,6 +89,7 @@ def display_device_secondary_dev_menu():
         'Status',
         'Enable',
         'Disable',
+        'Back to Main Menu',
         'Quit'
     ]
      

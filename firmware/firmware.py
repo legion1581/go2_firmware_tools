@@ -1,4 +1,5 @@
 from . import firmware_backup
+from . import firmware_ota
 from InquirerPy import inquirer
 from device.device_management import fetch_package_version
 
@@ -11,6 +12,7 @@ def display_firmware_menu():
         'Check Firmware Version',
         'Backup partitions',
         'Flash partitions',
+        'Install OTA update',
         'Back to Main Menu',
         'Quit'
     ]
@@ -29,6 +31,8 @@ def handle_firmware_choice(choice):
         print(f"Package version: {fetch_package_version()}")
     elif choice == 'Backup partitions':
         firmware_backup.cli_handler()
+    elif choice == 'Install OTA update':
+        firmware_ota.cli_handler()
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':

@@ -1,14 +1,13 @@
-from . import wifi_config, webrtc_managment
 from InquirerPy import inquirer
+from . import webrtc_multi_session
 
 # 
 # CMD MENU
 #    
 
-def display_network_menu():
+def display_device_menu():
     menu_items = [
-        'WiFi config',
-        'WebRTC config',
+        'Multi session',
         'Back to Main Menu',
         'Quit'
     ]
@@ -20,21 +19,19 @@ def display_network_menu():
 
     return choice
 
-def handle_network_choice(choice):
-    if choice == 'WiFi config':
-        wifi_config.cli_handler()
-    elif choice == 'WebRTC config':
-        webrtc_managment.cli_handler()
+def handle_device_choice(choice):
+    if choice == 'Multi session':
+        webrtc_multi_session.cli_handler()
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':
         exit()
     else:
-        print("Invalid choice, please try again.")
+        print(f"Invalid choice, please try again. choice : {choice}")
     return True
 
 def cli_handler():
     while True:
-        choice = display_network_menu()
-        if not handle_network_choice(choice):
+        choice = display_device_menu()
+        if not handle_device_choice(choice):
             break
