@@ -167,6 +167,7 @@ def display_firmware_menu():
     menu_items = [
         'Update to 1.0.24 PRO/EDU',
         'Update to 1.0.25 PRO/EDU',
+        'Update to 1.1.1 PRO/EDU',
         'Back to Main Menu',
         'Quit'
     ]
@@ -185,7 +186,9 @@ def handle_firmware_choice(choice):
     elif choice == 'Update to 1.0.25 PRO/EDU':
         run_ota_update("1.0.25")
         print(f"Updating to 1.0.25 PRO/EDU...")
-
+    elif choice == 'Update to 1.1.1 PRO/EDU':
+        run_ota_update("1.1.1")
+        print(f"Updating to 1.1.1 PRO/EDU...")
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':
