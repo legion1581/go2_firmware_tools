@@ -13,7 +13,10 @@ model_name_to_id = {name: id for id, name in model_id_to_name.items()}
 
 services_path = {
     "basic_service_check": "/unitree/robot/tool/basic_service_check",
-    "vui_service": "/unitree/module/vui_service/vui_service"
+    "vui_service": "/unitree/module/vui_service/vui_service",
+    "basic_service": "/unitree/module/basic_service/basic_service",
+    "master_service": "/unitree/module/master_service/master_service"
+
 }
 
 service_list = [
@@ -42,24 +45,16 @@ service_list = [
 
 
 services_sha = {
-    "1.0.24": {
+    "1.1.1": {
         "factory": {
-            "basic_service_check": "2a2d6897d239baa4f5fb5b7b87dc1fd35bd83bb802c52ee6e57f1bbb54693d1c",
-            "vui_service": "1dd64bce98015b33ad3d58487276f6c1f90900d7632bf8e9fe519ab555f5c45a"
+            "basic_service_check": "2b3c5ec92c1ff1e8587108a09edae5871275d51b3b5997aa2716bc65a5960719",
+            "basic_service": "ee143dcc7256e392cf3ec05c5269a6ccd8fa35af33c30363aced8b0368699285",
+            "master_service": "dfb88239a3abd84e762fcb29ea10216c4aff462040825d350ed8dc8320526dc3"
         },
         "patched": {
-            "basic_service_check": "8698762221907f676ab1dbdc7232ea040155a4fb55a1412e50de15dbf4d0a88d",
-            "vui_service": "dad569d91c96b8cfa24ce147a4c2b8ec3577f38601623be5c13b5cdbaf6fac97"
-        }
-    },
-    "1.0.25": {
-        "factory": {
-            "basic_service_check": "2a2d6897d239baa4f5fb5b7b87dc1fd35bd83bb802c52ee6e57f1bbb54693d1c",
-            "vui_service": "4434d7ff14ba749b969833d1374ca5e727de1b5a725f58766d3c6000b0fddf22"
-        },
-        "patched": {
-            "basic_service_check": "8698762221907f676ab1dbdc7232ea040155a4fb55a1412e50de15dbf4d0a88d",
-            "vui_service": "175b1f4a04fb697e443da8a3e2561a6d799899e7d1c57284519ea734e225696b"
+            "basic_service_check": "b5a96c1828ae2816d27d7877a956d047df804c4b8ee9f97e54c5c83add769a3b",
+            "basic_service": "c20bbbd8082319cb55d847a2002c471ecce595a1acf3983740d12e2211448737",
+            "master_service": "20bf108dd58a7bed3e1e39080e6f1f134768e443083321c545e0d9e85a25990d"
         }
     }
 }

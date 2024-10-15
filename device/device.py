@@ -1,5 +1,5 @@
 from InquirerPy import inquirer
-from . import device_management, device_secondary_development
+from . import device_management, device_secondary_development, device_services
 
 # 
 # CMD MENU
@@ -9,6 +9,7 @@ def display_device_menu():
     menu_items = [
         'Show Device Info',
         'Secondary Development',
+        'Shut down all services',
         'Reboot',
         'Back to Main Menu',
         'Quit'
@@ -26,6 +27,8 @@ def handle_device_choice(choice):
         device_management.print_device_data()
     elif choice == 'Secondary Development':
         device_secondary_development.cli_handler()
+    elif choice == 'Shut down all services':
+        device_services.stop_all_services()
     elif choice == 'Reboot':
         device_management.reboot_device()
     elif choice == 'Back to Main Menu':
