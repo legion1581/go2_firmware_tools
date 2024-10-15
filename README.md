@@ -4,8 +4,7 @@ This repository contains tools designed to configure and manipulate settings on 
 
 ## Supported version
 Currently supported firmware package 
-- 1.0.24 
-- 1.0.25 
+- 1.1.1
 
 ## Menu Overview
 
@@ -34,6 +33,7 @@ mkdir -p /unitree/dev
 cd /unitree/dev
 git clone https://github.com/legion1581/go2_firmware_tools.git
 cd go2_firmware_tools
+git checkout 1.1.1
 chmod +x install.sh
 ./install.sh
 ```
