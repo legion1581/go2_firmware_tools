@@ -38,8 +38,7 @@ def secondary_development_enable():
         while True:
             user_input = input(prompt).strip().lower()
             if user_input in ["yes", ""]:
-                # device_services.install_service_patch("vui_service", stop_service_flag=True)
-                print("!!!Not yet supported!!!")
+                device_services.install_service_patch("vui_service", stop_service_flag=True)
                 break
             elif user_input == "no":
                 logger.info("Operation canceled by user.")
@@ -72,8 +71,7 @@ def secondary_development_disable():
     device_services.install_factory_service("master_service")
 
     if real_model == "AIR" and device_services.is_patch_installed("vui_service"):
-        # device_services.install_service_patch("vui_service", stop_service_flag=True)
-        print("!!!Not yet supported!!!")
+        device_services.install_service_patch("vui_service", stop_service_flag=True)
 
     prompt = "Reboot required, reboot now? ([yes]/no): "
     while True:
