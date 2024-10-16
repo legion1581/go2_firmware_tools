@@ -1,10 +1,12 @@
-# Firmware Tools for Unitree Go2 Robots
+# Firmware Tools for Unitree Go2 AIR/PRO/EDU
 
 This repository contains tools designed to configure and manipulate settings on Unitree Go2 Robots. These tools should be installed directly on the robot.
 
 ## Supported version
 Currently supported firmware package 
 - 1.1.1
+
+For older firmware versions use the [1.0.24-1.0.25 branch](https://github.com/legion1581/go2_firmware_tools/tree/1.0.24-1.0.25)
 
 ## Menu Overview
 
