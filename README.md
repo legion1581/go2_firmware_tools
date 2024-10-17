@@ -34,6 +34,7 @@ mkdir -p /unitree/dev
 cd /unitree/dev
 git clone https://github.com/legion1581/go2_firmware_tools.git
 cd go2_firmware_tools
+got checkout 1.0.24-1.0.25
 chmod +x install.sh
 ./install.sh
 ```
