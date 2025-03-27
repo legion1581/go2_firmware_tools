@@ -15,3 +15,5 @@ ota_update_info = {
         "731aa58e2fa6fd5ab31d7410d0729bc8" 
     )
 }
+
+custom_firmware_description_file_js = "https://disk.yandex.com/d/2FNR2kolM0nbcQ"

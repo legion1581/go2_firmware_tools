@@ -5,6 +5,8 @@ import json
 import logging
 import sys
 import subprocess
+from .yandexDownloader import YandexDiskDownloader
+from firmware.constants import custom_firmware_description_file_js 
 
 logger = logging.getLogger('go2_firmware_tools')
 
@@ -169,6 +171,52 @@ def change_file_permissions(file_path, mode):
     except Exception as e:
         logger.error(f"An unexpected error occurred: {e}")
         raise SystemError(f"An unexpected error occurred: {e}")
+import subprocess
+
+def run_shell_command(command: str, suppress_empty_output: bool = True) -> None:
+    """
+    Executes a shell command using subprocess.Popen and prints its output in real time.
+
+    Args:
+        command (str): The shell command to execute.
+        suppress_empty_output (bool): If True, suppresses empty lines in stdout/stderr output.
+
+    Raises:
+        RuntimeError: If the command fails or produces an error.
+    """
+    try:
+        # Open a subprocess with stdout and stderr as pipes
+        with subprocess.Popen(
+            command,
+            shell=True,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE
+        ) as process:
+            
+            # Read and print stdout line by line in real time
+            for line in process.stdout:
+                stripped_line = line.rstrip()  # Remove trailing whitespace/newline
+                if not suppress_empty_output or stripped_line:  # Print only if not suppressed or non-empty
+                    print(stripped_line)
+            
+            # Read and print stderr line by line in real time
+            for line in process.stderr:
+                stripped_line = line.rstrip()  # Remove trailing whitespace/newline
+                if not suppress_empty_output or stripped_line:  # Print only if not suppressed or non-empty
+                    print(f"Error: {stripped_line}")
+            
+            # Wait for the process to finish and get the return code
+            return_code = process.wait()
+            
+            # Raise an exception if the command failed
+            if return_code != 0:
+                raise RuntimeError(f"Command failed with return code {return_code}: {command}")
+
+    except Exception as e:
+        # Log the error and re-raise it
+        print(f"An error occurred during command execution: {e}")
+        raise
 
 def load_config(file_path):
     with open(file_path, 'r') as file:
@@ -180,6 +228,44 @@ def update_config(file_path, updates):
     with open(file_path, 'w') as file:
         json.dump(config, file, indent=4)
 
+def get_latest_ota_version_info():
+    """
+    Fetches the latest OTA firmware version information from a JSON file hosted on Yandex Disk.
+
+    Returns:
+        str: The latest OTA version (e.g., "1.1.4").
+
+    Raises:
+        ValueError: If the `latest_version` key is missing or empty in the JSON data.
+    """
+    download_location = "./downloads"
+    
+    # Step 1: Create the download directory if it doesn't exist
+    os.makedirs(download_location, exist_ok=True)
+
+    print("Fetching latest firmware info...")
+
+    # Step 2: Initialize the downloader and start the download
+    downloader = YandexDiskDownloader(custom_firmware_description_file_js, download_location)
+    file_name = downloader.download()
+
+    custom_firmware_info_file_path = os.path.join(download_location, file_name)
+
+    # Step 3: Load the JSON file
+    try:
+        with open(custom_firmware_info_file_path, "r") as file:
+            custom_info_js_data = json.load(file)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"File not found: {custom_firmware_info_file_path}")
+    except json.JSONDecodeError:
+        raise ValueError(f"Invalid JSON format in file: {custom_firmware_info_file_path}")
+
+    # Step 4: Extract the latest OTA version
+    latest_ota_version = custom_info_js_data.get("latest_version")
+    if not latest_ota_version:
+        raise ValueError("Key 'latest_version' is missing or empty in the JSON data.")
+
+    return latest_ota_version
 
 if __name__ == "__main__":
     target_directory = '/home/legion/Documents/theroboverse/go2_firmware_tools/services/1.0.24/patched/vui_service'  # Change this to your target directory

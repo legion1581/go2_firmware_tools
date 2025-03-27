@@ -20,6 +20,8 @@ def secondary_development_status():
 
     status = (real_model != spoofed_model) and is_patched
     print("Secondary development status: " + ("ENABLED" if status else "DISABLED"))
+    if not status:
+        print("To enable secondary development on versions 1.1.1–1.1.4, custom firmware should be installed through the 'Firmware → Install Custom Firmware' menu.")
     return status
 
 def secondary_development_enable():
@@ -94,8 +96,6 @@ def secondary_development_disable():
 def display_device_secondary_dev_menu():
     menu_items = [
         'Status',
-        'Enable',
-        'Disable',
         'Back to Main Menu',
         'Quit'
     ]
@@ -110,10 +110,6 @@ def display_device_secondary_dev_menu():
 def handle_device_secondary_dev_choice(choice):
     if choice == 'Status':
         secondary_development_status()
-    elif choice == 'Enable':
-        secondary_development_enable()
-    elif choice == 'Disable':
-        secondary_development_disable()
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':

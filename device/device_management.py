@@ -10,7 +10,8 @@ deviceInfo = {
     "sn": "",
     "region":  "",
     "hw": "",
-    "bluetooth" : ""
+    "bluetooth" : "",
+    "secure_boot": False
 }
 
 script_path = ''
@@ -29,7 +30,7 @@ def fetch_device_data():
 
     os.makedirs(tmp_dir_path, exist_ok=True)
 
-    # Define the dd command
+    # Define the dd command to read data from uni.img
     dd_command = [
         'dd', 'if=/dev/mmcblk0p3', f'of={tmp_dir_path}/deviceInfo.txt', 
         'bs=1', 'skip=2304', 'count=25'
@@ -41,13 +42,30 @@ def fetch_device_data():
     
     # Read the content of the output file
     with open('/unitree/tmp/deviceInfo.txt', 'r') as file:
-        data = file.read().strip()
+        uni_data = file.read().strip()
     
     # Parse the output data
-    deviceInfo["sn"] = data[:16]
-    deviceInfo["region"] = data[16:18]
-    deviceInfo["hw"] = f"{data[18]}.{data[19]}"
-    deviceInfo["bluetooth"] = data[20:]
+    deviceInfo["sn"] = uni_data[:16]
+    deviceInfo["region"] = uni_data[16:18]
+    deviceInfo["hw"] = f"{uni_data[18]}.{uni_data[19]}"
+    deviceInfo["bluetooth"] = uni_data[20:]
+
+    # Lets read the first sector after 0x40 to verify if we have Secure Boot or not
+    # Define the dd command to read data from preloader
+    dd_command = [
+        'dd', 'if=/dev/mmcblk0', f'of={tmp_dir_path}/preloader_first_sector.txt', 
+        'bs=512', 'skip=64', 'count=1'
+    ]
+    
+    # Execute the dd command, redirecting stdout and stderr to /dev/null
+    with open('/dev/null', 'w') as devnull:
+        subprocess.run(dd_command, check=True, stdout=devnull, stderr=devnull)
+    
+    # Read the content of the output file
+    with open('/unitree/tmp/preloader_first_sector.txt', 'rb') as file:
+        preloader_data = file.read()
+
+    deviceInfo["secure_boot"] = preloader_data[:4] == b'RKSS'
 
     return deviceInfo
 
@@ -70,13 +88,26 @@ def get_real_hw_ver():
 def get_real_bluetooth_code():
     return deviceInfo["bluetooth"]
 
+def get_secure_boot_status():
+    return deviceInfo["secure_boot"]
+
 def print_device_data():
+    """Print device-related information."""
     print(f"Serial: {get_real_serial_number()}")
     print(f"Model: Go2 {get_real_model()}")
     print(f"Region: {get_real_country()}")
-    print(f"Package ver: {fetch_package_version()}")
+
+    # Fetch custom package version and determine the final package version string
+    custom_package_version = fetch_custom_package_version()
+    if custom_package_version:  # Check if custom_package_version is not None or empty
+        package_version = f"{fetch_package_version()} mod {custom_package_version}"
+    else:
+        package_version = fetch_package_version()
+
+    print(f"Package ver: {package_version}")
     print(f"Hardware ver: {get_real_hw_ver()}")
     print(f"Bluetooth: {get_real_bluetooth_code()}")
+    print("Secure Boot: " + ("ENABLED" if get_secure_boot_status() else "DISABLED"))
 
 def get_spoofed_model():
     """Retrieve the model type from the version file in the basic directory."""
@@ -91,13 +122,31 @@ def fetch_package_version():
     package_info = read_json_file('/unitree/robot/pkg/version/version.json')
     return package_info.get('Package', 'Version not found') if package_info else 'Version not found'
 
+def fetch_custom_package_version():
+    """
+    Read the Mod version from a JSON file.
+    Returns the version if 'Mod' exists, otherwise returns None.
+    """
+    package_info = read_json_file('/unitree/robot/pkg/version/version.json')
+    if package_info and 'Mod' in package_info:
+        return package_info['Mod']
+    return None
+
+def is_custom_firmware():
+    """Read the package version from a JSON file."""
+    package_info = read_json_file('/unitree/robot/pkg/version/version.json')
+    return 'Mod' in package_info
+
 def calculate_service_sha256(service_name):
     """Calculate the SHA-256 hash of a service file."""
     return get_file_sha256(services_path[service_name])
 
 def is_firmware_version_supported():
     """Check if the current firmware version is supported for patching."""
-    return fetch_package_version() in services_sha
+    if is_custom_firmware():
+        return True
+    else:
+        return fetch_package_version() in services_sha
 
 def reboot_device():
     """Reboots the device by calling the operating system's reboot command."""

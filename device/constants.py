@@ -41,6 +41,8 @@ service_list = [
     "webrtc_signal_server",
     "net_switcher",
     "master_service",
+    "gesture_recognition",
+    "pet_go"
 ]
 
 

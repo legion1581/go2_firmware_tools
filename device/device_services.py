@@ -9,8 +9,13 @@ logger = logging.getLogger('go2_firmware_tools')
 def is_patch_installed(service_name):
     """Check if a specific patch is already installed by comparing SHA-256 hashes."""
     current_ver = fetch_package_version()
-    expected_sha = services_sha.get(current_ver, {}).get("patched", {}).get(service_name)
+    is_custom = is_custom_firmware()
+
+    # Determine the expected SHA-256 hash from the services_sha dictionary
+    version_key = '1.1.1' if is_custom else current_ver
+    expected_sha = services_sha.get(version_key, {}).get("patched", {}).get(service_name)
     calculated_sha = calculate_service_sha256(service_name)
+
     return expected_sha == calculated_sha if expected_sha else False
 
 def stop_service(service_name):
@@ -42,12 +47,14 @@ def install_service_patch(service_name, stop_service_flag=False):
     logger.info(f"Installing patch for {service_name}")
     if is_firmware_version_supported():
         if not is_patch_installed(service_name):
-            package_version = fetch_package_version()
+            current_package_ver = fetch_package_version()
+            is_custom = is_custom_firmware()
+            package_version = '1.1.1' if is_custom else current_package_ver
             # Get the directory containing main.py
             main_py_dir = get_script_path()
 
             # Construct the desired path
-            source_path = os.path.join(main_py_dir, f"services/{package_version}/patched/{service_name}")
+            source_path = os.path.join(main_py_dir, f"files/{package_version}/patched/{service_name}")
             dest_path = services_path[service_name]
             if stop_service_flag:
                 stop_service(service_name)
@@ -62,11 +69,14 @@ def install_service_patch(service_name, stop_service_flag=False):
 def install_factory_service(service_name, stop_service_flag=False):
     """Install a service patch if the current firmware version is supported and the patch is not installed."""
     if is_firmware_version_supported():
-        package_version = fetch_package_version()
+        current_package_ver = fetch_package_version()
+        is_custom = is_custom_firmware()
+        package_version = '1.1.1' if is_custom else current_package_ver
+
         main_py_dir = get_script_path()
 
         # Construct the desired path
-        source_path = os.path.join(main_py_dir, f"services/{package_version}/factory/{service_name}")
+        source_path = os.path.join(main_py_dir, f"files/{package_version}/factory/{service_name}")
         dest_path = services_path[service_name]
         if stop_service_flag:
                 stop_service(service_name)

@@ -1,5 +1,5 @@
 from InquirerPy import inquirer
-from . import device_management, device_secondary_development, device_services
+from . import device_management, device_secondary_development, device_services, device_unitree_go_app
 
 # 
 # CMD MENU
@@ -9,6 +9,7 @@ def display_device_menu():
     menu_items = [
         'Show Device Info',
         'Secondary Development',
+        'Unitree Go APP Compatibility',
         'Shut down all services',
         'Reboot',
         'Back to Main Menu',
@@ -27,6 +28,8 @@ def handle_device_choice(choice):
         device_management.print_device_data()
     elif choice == 'Secondary Development':
         device_secondary_development.cli_handler()
+    elif choice == 'Unitree Go APP Compatibility':
+        device_unitree_go_app.cli_handler()
     elif choice == 'Shut down all services':
         device_services.stop_all_services()
     elif choice == 'Reboot':
