@@ -21,13 +21,12 @@ For older firmware versions use the [1.0.24-1.0.25 branch](https://github.com/le
 5. **Reboot** -  Reboot the device.
 ### Firmware
 6. **Backup partitions** - Backup pre-uboot, uboot, boot, and uni partitions to the /unitree/tmp/backup folder.
-7. **Install OTA updates** - Download and install official OTA update for PRO/EDU model. Usefull for AIR users to install full firmware package
-8. **Install custom package** - Installs custom package with secondary development enabled, providing access to the full set of files from the PRO/EDU models. This is also perfect for AIR users who want to unlock the complete range of services, including AI mode. 
-9. **MCU** - Flasher for MCU. Required when updating from 1.0.x.x to 1.1.x
-10. **Motors** - Flasher for Go2 motors. This Motor firmware was introduces in firmware version 1.0.24, presumably to support higher torques required for AI mode.
+7. **Install custom package** - Installs custom package with secondary development enabled, providing access to the full set of files from the PRO/EDU models. This is also perfect for AIR users who want to unlock the complete range of services, including AI mode. 
+8. **MCU** - Flasher for MCU. Required when updating from 1.0.x.x to 1.1.x
+9. **Motors** - Flasher for Go2 motors. This Motor firmware was introduces in firmware version 1.0.24, presumably to support higher torques required for AI mode.
 ### Network
-11. **WiFi config** - Switch WiFi either to AP or STA mode.
-12. **WebRTC config** - WebRTC config.
+10. **WiFi config** - Switch WiFi either to AP or STA mode.
+11. **WebRTC config** - WebRTC config.
     - **Multi-session**: Enable or disable multi-session support within WebRTC. This allows the device to handle multiple concurrent WebRTC sessions, which is useful for managing multiple remote connections simultaneously
 
 ## Installation
