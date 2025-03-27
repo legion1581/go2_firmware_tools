@@ -6,7 +6,7 @@ import logging
 import sys
 import subprocess
 from .yandexDownloader import YandexDiskDownloader
-from firmware.constants import custom_firmware_description_file_js 
+from firmware.constants import custom_package_description_file_js 
 
 logger = logging.getLogger('go2_firmware_tools')
 
@@ -246,7 +246,7 @@ def get_latest_ota_version_info():
     print("Fetching latest firmware info...")
 
     # Step 2: Initialize the downloader and start the download
-    downloader = YandexDiskDownloader(custom_firmware_description_file_js, download_location)
+    downloader = YandexDiskDownloader(custom_package_description_file_js, download_location)
     file_name = downloader.download()
 
     custom_firmware_info_file_path = os.path.join(download_location, file_name)
@@ -261,7 +261,7 @@ def get_latest_ota_version_info():
         raise ValueError(f"Invalid JSON format in file: {custom_firmware_info_file_path}")
 
     # Step 4: Extract the latest OTA version
-    latest_ota_version = custom_info_js_data.get("latest_version")
+    latest_ota_version = custom_info_js_data.get("latest_ota_version")
     if not latest_ota_version:
         raise ValueError("Key 'latest_version' is missing or empty in the JSON data.")
 

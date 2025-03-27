@@ -1,4 +1,4 @@
-from . import firmware_backup, firmware_custom_firmware, firmware_mcu
+from . import firmware_backup, firmware_custom_package, firmware_mcu
 from InquirerPy import inquirer
 from device.device_management import fetch_package_version, fetch_custom_package_version
 
@@ -42,7 +42,7 @@ def handle_firmware_choice(choice):
     elif choice == 'Backup partitions':
         firmware_backup.cli_handler()
     elif choice == 'Install custom firmware':
-        firmware_custom_firmware.cli_handler()
+        firmware_custom_package.cli_handler()
     elif choice == 'MCU':
         firmware_mcu.cli_handler()
     elif choice == 'Back to Main Menu':

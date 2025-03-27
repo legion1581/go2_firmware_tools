@@ -5,7 +5,7 @@ import subprocess
 from InquirerPy import inquirer
 from util.yandexDownloader import YandexDiskDownloader
 from util.utilities import run_shell_command
-from .constants import custom_firmware_description_file_js
+from .constants import custom_package_description_file_js
 from device.device_services import stop_all_services
 from device import device_management, device_services
 
@@ -26,14 +26,14 @@ def read_system_version():
         data = json.load(file)
         return data.get("Version")
 
-def download_latest_custom_firmware_info(download_location: str = "./downloads"):
+def download_latest_custom_package_info(download_location: str = "./downloads"):
     # Create the download directory if it doesn't exist
     os.makedirs(download_location, exist_ok=True)
 
-    print(f"Downloading custom firmware info...")
+    print(f"Downloading custom package info...")
 
     # Initialize the downloader and start the download
-    downloader = YandexDiskDownloader(custom_firmware_description_file_js, download_location)
+    downloader = YandexDiskDownloader(custom_package_description_file_js, download_location)
     file_name = downloader.download()
 
     return file_name
@@ -44,8 +44,8 @@ def download_custom_package_from_yandex_disk(package_link: str, md5sum: str, dow
     Downloads a custom package file from Yandex Disk using the provided package link.
 
     Args:
-        package_link (str): The direct download link for the firmware package on Yandex Disk.
-        download_location (str): The directory where the firmware should be saved. Defaults to "./downloads".
+        package_link (str): The direct download link for the package package on Yandex Disk.
+        download_location (str): The directory where the package should be saved. Defaults to "./downloads".
 
     Returns:
         str: The name of the downloaded package file.
@@ -113,41 +113,41 @@ def extract_tar_xz(file_path: str, extract_dir: str = "/"):
         raise RuntimeError("`tar` command not found. Ensure it is installed and available in your PATH.")
 
 
-def run_firmware_flasher(version: str):
+def run_package_flasher(version: str):
     """
-    Runs the custom firmware installation.
+    Runs the custom package installation.
     """
     download_dir = "./downloads"
 
     try:
-        # Step 1: Download the custom firmware info
-        custom_firmware_info_file_name = download_latest_custom_firmware_info()
-        custom_firmware_info_file_path = os.path.join(download_dir, custom_firmware_info_file_name)
+        # Step 1: Download the custom package info
+        custom_package_info_file_name = download_latest_custom_package_info()
+        custom_package_info_file_path = os.path.join(download_dir, custom_package_info_file_name)
 
         # Step 2: Load the JSON file
-        with open(custom_firmware_info_file_path, "r") as file:
+        with open(custom_package_info_file_path, "r") as file:
             custom_info_js_data = json.load(file)
 
         # Step 3: Get the link to the appropriate package version
         real_model = device_management.get_real_model()
 
         if real_model in ['AIR', 'PRO', 'EDU', 'MAX']:
-            package_link = custom_info_js_data.get('custom_firmware_info', {}).get(version, {}).get("AIR_PRO_EDU")
-            md5sum = custom_info_js_data.get('custom_firmware_info', {}).get(version, {}).get("md5")
+            package_link = custom_info_js_data.get('custom_package_info', {}).get(version, {}).get("AIR_PRO_EDU")
+            md5sum = custom_info_js_data.get('custom_package_info', {}).get(version, {}).get("md5")
         else:
             raise ValueError(f"Unsupported device model: {real_model}")
 
         # Step 4: Download the custom package
         print(f"Downloading package version {version}...")
-        custom_firmware_file_name = download_custom_package_from_yandex_disk(package_link, md5sum)
-        firmware_path = os.path.join(download_dir, custom_firmware_file_name)
+        custom_package_file_name = download_custom_package_from_yandex_disk(package_link, md5sum)
+        package_path = os.path.join(download_dir, custom_package_file_name)
 
         # Step 5: Stop all services
         stop_all_services()
 
-        # Step 6: Extract the firmware
-        print(f"Extracting package from '{firmware_path}'...")
-        extract_tar_xz(firmware_path, extract_dir="/")
+        # Step 6: Extract the package
+        print(f"Extracting package from '{package_path}'...")
+        extract_tar_xz(package_path, extract_dir="/")
 
 
         # Step 7: Run post-install scripts
@@ -161,7 +161,7 @@ def run_firmware_flasher(version: str):
             device_services.install_service_patch("vui_service", stop_service_flag=True)
 
         # Installation Complete
-        print("Firmware installation complete.")
+        print("Package installation complete.")
 
         # Step 9: Prompt for reboot
         prompt = "Reboot required, reboot now? ([yes]/no): "
@@ -175,19 +175,19 @@ def run_firmware_flasher(version: str):
             else:
                 logger.info("Invalid input. Please answer 'yes' or press Enter to continue, 'no' to cancel.")
     except Exception as e:
-        raise RuntimeError(f"An error occurred during firmware installation: {e}")
+        raise RuntimeError(f"An error occurred during package installation: {e}")
 
 
 # 
 # CMD MENU
 #    
 
-def display_custom_firmware_menu():
+def display_custom_package_menu():
     menu_items = [
-        'Install custom firmware 1.1.1',
-        'Install custom firmware 1.1.2',
-        'Install custom firmware 1.1.3',
-        'Install custom firmware 1.1.4',
+        'Install custom package 1.1.1',
+        'Install custom package 1.1.2',
+        'Install custom package 1.1.3',
+        'Install custom package 1.1.4',
         'Back to Main Menu',
         'Quit'
     ]
@@ -199,15 +199,15 @@ def display_custom_firmware_menu():
 
     return choice
 
-def handle_custom_firmware_choice(choice):
-    if choice == 'Install custom firmware 1.1.1':
-        run_firmware_flasher("1.1.1")
-    elif choice == 'Install custom firmware 1.1.2':
-        run_firmware_flasher("1.1.2")
-    elif choice == 'Install custom firmware 1.1.3':
-        run_firmware_flasher("1.1.3")
-    elif choice == 'Install custom firmware 1.1.4':
-        run_firmware_flasher("1.1.4")
+def handle_custom_package_choice(choice):
+    if choice == 'Install custom package 1.1.1':
+        run_package_flasher("1.1.1")
+    elif choice == 'Install custom package 1.1.2':
+        run_package_flasher("1.1.2")
+    elif choice == 'Install custom package 1.1.3':
+        run_package_flasher("1.1.3")
+    elif choice == 'Install custom package 1.1.4':
+        run_package_flasher("1.1.4")
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':
@@ -218,10 +218,10 @@ def handle_custom_firmware_choice(choice):
 
 def cli_handler():
     while True:
-        choice = display_custom_firmware_menu()
-        if not handle_custom_firmware_choice(choice):
+        choice = display_custom_package_menu()
+        if not handle_custom_package_choice(choice):
             break
 
 # Example usage
 if __name__ == "__main__":
-    run_firmware_flasher("1.1.1")
+    run_package_flasher("1.1.1")
