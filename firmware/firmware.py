@@ -20,7 +20,7 @@ def display_firmware_menu():
     menu_items = [
         'Check Firmware Version',
         'Backup partitions',
-        'Install custom firmware',
+        'Install custom package',
         'MCU',
         'Motors',
         'Back to Main Menu',
@@ -41,7 +41,7 @@ def handle_firmware_choice(choice):
         display_firmware_version()
     elif choice == 'Backup partitions':
         firmware_backup.cli_handler()
-    elif choice == 'Install custom firmware':
+    elif choice == 'Install custom package':
         firmware_custom_package.cli_handler()
     elif choice == 'MCU':
         firmware_mcu.cli_handler()
