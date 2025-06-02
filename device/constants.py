@@ -23,6 +23,7 @@ service_list = [
     "sport_mode",
     "advanced_sport",
     "ai_sport",
+    "mcf",
     "motion_switcher",
     "basic_service",
     "audio_hub",
@@ -40,9 +41,10 @@ service_list = [
     "webrtc_multicast_responder",
     "webrtc_signal_server",
     "net_switcher",
-    "master_service",
+    "programming_actuator",
     "gesture_recognition",
-    "pet_go"
+    "pet_go",
+    "master_service" 
 ]
 
 

@@ -34,10 +34,11 @@ def restart_service(service_name):
 
 def stop_all_services():
     print(f"Stopping all services...")
+    lay_down()
     stop_service("sport_mode")
     stop_service("advanced_sport")
     stop_service("ai_sport")
-    lay_down()
+    stop_service("mcf")
     for service in service_list:
         stop_service(service)
 

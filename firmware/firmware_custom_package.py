@@ -157,7 +157,8 @@ def run_package_flasher(version: str):
         run_shell_command("if [ ! -e /usr/lib/aarch64-linux-gnu/libgomp-d22c30c5.so.1.0.0 ]; then ln -s /usr/lib/aarch64-linux-gnu/libgomp.so.1.0.0 /usr/lib/aarch64-linux-gnu/libgomp-d22c30c5.so.1.0.0; fi")
         
         # STEP 8: for AIR model, patch the VUI service
-        if real_model == 'AIR':
+        # Skip patch installation for 1.1.7 (Not ready yet)
+        if real_model == 'AIR' and version != '1.1.7':
             device_services.install_service_patch("vui_service", stop_service_flag=True)
 
         # Installation Complete
@@ -188,6 +189,7 @@ def display_custom_package_menu():
         'Install custom package 1.1.2',
         'Install custom package 1.1.3',
         'Install custom package 1.1.4',
+        'Install custom package 1.1.7',
         'Back to Main Menu',
         'Quit'
     ]
@@ -208,6 +210,8 @@ def handle_custom_package_choice(choice):
         run_package_flasher("1.1.3")
     elif choice == 'Install custom package 1.1.4':
         run_package_flasher("1.1.4")
+    elif choice == 'Install custom package 1.1.7':
+        run_package_flasher("1.1.7")
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':
