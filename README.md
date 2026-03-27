@@ -3,8 +3,8 @@
 This repository contains tools designed to configure and manipulate settings on Unitree Go2 Robots. These tools should be installed directly on the robot.
 
 ## Supported version
-Currently supported firmware package 
-- 1.1.1-1.1.11 (latest avaialble)
+Currently supported firmware package
+- 1.1.1-1.1.14 (latest available)
 
 For older firmware versions, use the appropriate branch:
 * [1.0.24-1.0.25 branch](https://github.com/legion1581/go2_firmware_tools/tree/1.0.24-1.0.25)
@@ -19,7 +19,7 @@ For older firmware versions, use the appropriate branch:
 5. **Reboot** -  Reboot the device.
 ### Firmware
 6. **Backup partitions** - Backup pre-uboot, uboot, boot, and uni partitions to the /unitree/tmp/backup folder.
-7. **Install custom package** - Installs custom package with secondary development enabled, providing access to the full set of files from the PRO/EDU models. This is also perfect for AIR users who want to unlock the complete range of services, including AI mode. 
+7. **Install custom package** - Installs custom package with secondary development enabled, providing access to the full set of files from the PRO/EDU models. This is also perfect for AIR users who want to unlock the complete range of services, including AI mode.
 8. **MCU** - Flasher for MCU. Required when updating from 1.0.x.x to 1.1.x
 9. **Motors** - Flasher for Go2 motors. This Motor firmware was introduces in firmware version 1.0.24, presumably to support higher torques required for AI mode.
 ### Network
@@ -29,7 +29,7 @@ For older firmware versions, use the appropriate branch:
 
 ## Installation
 
-A custom firmware upgrade or jailbreak is required. For detailed instructions, visit [theroboverse.com](https://theroboverse.com). 
+A custom firmware upgrade or jailbreak is required. For detailed instructions, visit [theroboverse.com](https://theroboverse.com).
 
 After gaining root, follow these steps to install manually:
 
@@ -52,7 +52,7 @@ Connect via SSH to the dog and execute:
 ./update.sh
 ```
 
-## Usage 
+## Usage
 Launch the scipt and choose the required option:
 ```bash
 cd /unitree/dev/go2_firmware_tools
