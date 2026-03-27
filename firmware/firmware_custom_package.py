@@ -155,7 +155,7 @@ def run_package_flasher(version: str):
         run_shell_command("/unitree/opt/lib/vlc/vlc-cache-gen /unitree/opt/lib/vlc/plugins")
         run_shell_command("ldconfig")
         run_shell_command("if [ ! -e /usr/lib/aarch64-linux-gnu/libgomp-d22c30c5.so.1.0.0 ]; then ln -s /usr/lib/aarch64-linux-gnu/libgomp.so.1.0.0 /usr/lib/aarch64-linux-gnu/libgomp-d22c30c5.so.1.0.0; fi")
-        
+
         # STEP 8: for AIR model, patch the VUI service
         # Skip patch installation for 1.1.7 (Not ready yet)
         if real_model == 'AIR' and version != '1.1.7':
@@ -179,9 +179,9 @@ def run_package_flasher(version: str):
         raise RuntimeError(f"An error occurred during package installation: {e}")
 
 
-# 
+#
 # CMD MENU
-#    
+#
 
 def display_custom_package_menu():
     menu_items = [
@@ -191,10 +191,11 @@ def display_custom_package_menu():
         'Install custom package 1.1.4',
         'Install custom package 1.1.7',
         'Install custom package 1.1.11',
+        'Install custom package 1.1.14',
         'Back to Main Menu',
         'Quit'
     ]
-     
+
     choice = inquirer.select(
         message="Select an option:",
         choices=menu_items
@@ -215,6 +216,8 @@ def handle_custom_package_choice(choice):
         run_package_flasher("1.1.7")
     elif choice == 'Install custom package 1.1.11':
         run_package_flasher("1.1.11")
+    elif choice == 'Install custom package 1.1.14':
+        run_package_flasher("1.1.14")
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':

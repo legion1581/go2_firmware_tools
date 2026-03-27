@@ -44,7 +44,7 @@ service_list = [
     "programming_actuator",
     "gesture_recognition",
     "pet_go",
-    "master_service" 
+    "master_service"
 ]
 
 
@@ -61,6 +61,18 @@ services_sha = {
             "basic_service": "c20bbbd8082319cb55d847a2002c471ecce595a1acf3983740d12e2211448737",
             "master_service": "20bf108dd58a7bed3e1e39080e6f1f134768e443083321c545e0d9e85a25990d",
             "vui_service" : "935386b86a630059cdff461d0b2aba9f46e49d522d4b0347cf72cc5f5595d6a3"
+        }
+    },
+    "1.1.14": {
+        "factory": {
+            "basic_service_check": "2b3c5ec92c1ff1e8587108a09edae5871275d51b3b5997aa2716bc65a5960719",
+            "basic_service": "05ce2163f112d566e155f2da9c270d2d0c7f529f08043a7f25a4a47056b36c3c",
+            "master_service": "a01334a2573573e274065ee926093a92ffccbd045082453436bbd076fcf26309",
+        },
+        "patched": {
+            "basic_service_check": "b5a96c1828ae2816d27d7877a956d047df804c4b8ee9f97e54c5c83add769a3b",
+            "basic_service": "7e7d4a34ba8d215cc8999c43979ee37f9bbf395384ae4d721b41b834ed454e58",
+            "master_service": "f1d88327375868e3f5a8aa904605cb8b74c6bc37882435a2c9882552e06e226e",
         }
     }
 }
