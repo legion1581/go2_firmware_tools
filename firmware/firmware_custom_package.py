@@ -1,5 +1,6 @@
 import os
 import json
+import shutil
 import logging
 import subprocess
 from InquirerPy import inquirer
@@ -12,6 +13,51 @@ from device import device_management, device_services
 
 # Get the logger
 logger = logging.getLogger('go2_firmware_tools')
+
+# Optional cleanup manifest extracted from the custom package. Lists absolute
+# paths that should be removed after the new package is laid down on disk,
+# so files dropped between firmware versions don't linger.
+REMOVE_LIST_PATH = "/unitree/tmp/custom_package_remove_list.txt"
+
+
+def apply_remove_list(remove_list_path: str = REMOVE_LIST_PATH):
+    """
+    Deletes paths listed in the remove_list manifest, then deletes the
+    manifest itself. The manifest is optional: missing file or missing
+    entries are silently ignored. Blank lines and lines starting with '#'
+    are skipped.
+    """
+    if not os.path.isfile(remove_list_path):
+        return
+
+    try:
+        with open(remove_list_path, "r") as f:
+            entries = f.readlines()
+    except OSError:
+        return
+
+    removed = 0
+    for raw in entries:
+        path = raw.strip()
+        if not path or path.startswith("#"):
+            continue
+        try:
+            if os.path.islink(path) or os.path.isfile(path):
+                os.remove(path)
+                removed += 1
+            elif os.path.isdir(path):
+                shutil.rmtree(path)
+                removed += 1
+        except OSError:
+            pass
+
+    try:
+        os.remove(remove_list_path)
+    except OSError:
+        pass
+
+    if removed:
+        print(f"Cleaned up {removed} stale path(s) from previous package.")
 
 
 def read_system_version():
@@ -149,6 +195,8 @@ def run_package_flasher(version: str):
         print(f"Extracting package from '{package_path}'...")
         extract_tar_xz(package_path, extract_dir="/")
 
+        # Step 6b: Apply optional cleanup manifest bundled in the package.
+        apply_remove_list()
 
         # Step 7: Run post-install scripts
         print(f"Running post-install commands...")
