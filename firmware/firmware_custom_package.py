@@ -239,6 +239,7 @@ def display_custom_package_menu():
         'Install custom package 1.1.4',
         'Install custom package 1.1.7',
         'Install custom package 1.1.11',
+        'Install custom package 1.1.15',
         'Back to Main Menu',
         'Quit'
     ]
@@ -263,6 +264,8 @@ def handle_custom_package_choice(choice):
         run_package_flasher("1.1.7")
     elif choice == 'Install custom package 1.1.11':
         run_package_flasher("1.1.11")
+    elif choice == 'Install custom package 1.1.15':
+        run_package_flasher("1.1.15")
     elif choice == 'Back to Main Menu':
         return False
     elif choice == 'Quit':
