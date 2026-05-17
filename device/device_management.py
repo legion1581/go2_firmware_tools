@@ -21,7 +21,6 @@ def device_init(script_path_l):
     script_path = script_path_l
 
 def lay_down():
-    # os.system('/unitree/sbin/tscli release 0')
     os.system('/unitree/robot/tool/basic_demarcate Start_Move_zero_position')
 
 

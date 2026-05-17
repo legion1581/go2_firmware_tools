@@ -34,12 +34,28 @@ def restart_service(service_name):
 
 def stop_all_services():
     print(f"Stopping all services...")
+    # Order mirrors Install.CmdPreList from every official Unitree OTA package
+    # (1.0.24 through 1.1.15): stop the high-level motion publishers BEFORE
+    # calling basic_demarcate, otherwise the running controller keeps publishing
+    # LowCmd and fights the lay-down move — the dog starts to squat and then
+    # jumps as the controller applies a correction.
+    #
+    # mcf (Motion Control Framework, present since 1.1.6) is the active low-level
+    # publisher on modern firmware when sport_mode is idle, so it must be in the
+    # pre-lay-down set even though the stock OTA's CmdPreList omits it.
+    # motion_switcher stays in post — it routes basic_demarcate's cmds to the
+    # motors and has to remain up during the move.
+    pre_lay_down = ("sport_mode", "advanced_sport", "ai_sport", "mcf")
+    post_lay_down = ("motion_switcher",)
+    for s in pre_lay_down:
+        stop_service(s)
     lay_down()
-    stop_service("sport_mode")
-    stop_service("advanced_sport")
-    stop_service("ai_sport")
-    stop_service("mcf")
+    for s in post_lay_down:
+        stop_service(s)
+    already_stopped = set(pre_lay_down) | set(post_lay_down)
     for service in service_list:
+        if service in already_stopped:
+            continue
         stop_service(service)
 
 

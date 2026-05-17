@@ -59,13 +59,17 @@ class YandexDiskDownloader:
 
         total_size = int(download_response.headers.get('content-length', 0))  # Total file size in bytes
 
-        # Step 4: Write the file while showing a progress bar
+        # Step 4: Write the file while showing a progress bar.
+        # Keep desc short and let tqdm shrink to the terminal width so the
+        # bar stays on one line even on narrow SSH sessions.
         with open(save_path, "wb") as file, tqdm(
-            desc=file_name,  # Description of the progress bar
-            total=total_size,  # Total size of the file
-            unit='B',  # Unit of measurement
-            unit_scale=True,  # Scale units (e.g., KB, MB)
-            unit_divisor=1024  # Divide by 1024 for scaling
+            desc="Downloading",
+            total=total_size,
+            unit='B',
+            unit_scale=True,
+            unit_divisor=1024,
+            dynamic_ncols=True,
+            leave=True,
         ) as progress_bar:
             for chunk in download_response.iter_content(chunk_size=1024):
                 if chunk:
