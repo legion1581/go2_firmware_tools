@@ -29,7 +29,7 @@ For older firmware versions, use the appropriate branch:
 
 ## Installation
 
-A custom firmware upgrade or jailbreak is required. For detailed instructions, visit [theroboverse.com](https://theroboverse.com). 
+A custom firmware upgrade or jailbreak is required. For detailed instructions, visit [robolegion.com](https://robolegion.com). 
 
 After gaining root, follow these steps to install manually:
 
@@ -61,7 +61,7 @@ cd /unitree/dev/go2_firmware_tools
 
 ### Thanks
 
-To TheRoboVerse community! Visit us at [TheRoboVerse](https://theroboverse.com) for more information and support.
+To RoboLegion community! Visit us at [RoboLegion](https://robolegion.com) for more information and support.
 
 ### Support
 
