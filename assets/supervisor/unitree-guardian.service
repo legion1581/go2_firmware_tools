@@ -1,0 +1,20 @@
+[Unit]
+Description=Unitree Guardian (SSH + WiFi lock-out failsafe)
+Documentation=https://github.com/legion1581/unitree_firmware_tools
+# Deliberately independent of the services it guards, so a broken stack can't take it down.
+DefaultDependencies=no
+After=network-pre.target
+Conflicts=shutdown.target
+Before=shutdown.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/sbin/unitree-guardian.sh
+Restart=always
+RestartSec=3
+# survive OOM pressure so it's alive exactly when the box is unhealthy
+OOMScoreAdjust=-800
+KillMode=process
+
+[Install]
+WantedBy=multi-user.target
